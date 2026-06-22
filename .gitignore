@@ -1,0 +1,2 @@
+# Regenerable knowledge-graph index (rebuilt by `nomograph-sysml index` and CI).
+.nomograph/index.json

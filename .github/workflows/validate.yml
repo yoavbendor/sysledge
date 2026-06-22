@@ -1,0 +1,30 @@
+name: validate-models
+
+# The hard gate from docs/conventions.md: no SysML that fails validation, and no regression in
+# requirement traceability, lands on a branch.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nomograph-sysml
+        run: cargo install sysml-cli
+
+      - name: Validate all SysML files
+        run: bash .nomograph/scripts/validate-model.sh .
+
+      - name: Build knowledge-graph index
+        run: nomograph-sysml index lib models --output .nomograph/index.json
+
+      - name: Traceability gate (orphan + missing-verification must be zero)
+        run: nomograph-sysml check orphan-requirements missing-verification --fail-on-findings
+
+      - name: Completeness report (informational)
+        run: nomograph-sysml check all --detail --format pretty

@@ -1,0 +1,20 @@
+# nomograph-sysml configuration
+
+[index]
+path = ".nomograph/index.json"
+auto_index = true
+
+[output]
+format = "json"
+detail_level = "l1"
+
+[search]
+default_limit = 10
+
+[trace]
+max_hops = 3
+direction = "both"
+format = "chain"
+
+[check]
+default_checks = ["all"]

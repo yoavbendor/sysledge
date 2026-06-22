@@ -1,0 +1,27 @@
+# Immutable source registry for the nanos3reader model.
+#
+# S3-backed raw storage is deferred for now, so this manifest is the provenance anchor: it pins the
+# exact repository revision every @Provenance "source" string in models/nanos3reader/ refers to.
+# When the upstream repo advances, add a NEW entry here (do not edit an existing one) and run the
+# "fix"/"augment" maintenance verbs to reconcile the model against the delta.
+
+system: nanos3reader
+description: Minimal, read-only S3 range reader for C++ (seekable std::istream over HTTP range GETs + SigV4).
+
+sources:
+  - id: nanos3reader@ff28f0b
+    kind: git-repository
+    repo: yoavbendor/nanos3reader
+    commit: ff28f0b5d988afc155b83d30a2296332b7825ff6
+    commit_date: 2026-06-19
+    ingested: 2026-06-22
+    # Files read during ingestion; provenance anchors point into these.
+    files:
+      - README.md
+      - include/nanos3reader/s3_reader.h
+      - src/s3_reader.cpp
+      - examples/s3cat.cpp
+      - tests/sigv4_test.cpp
+      - tests/minio_integration_test.cpp
+      - CMakeLists.txt
+      - .github/workflows/ci.yml
