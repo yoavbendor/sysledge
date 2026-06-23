@@ -1,0 +1,48 @@
+classDiagram
+  class Nanos3reader["Nanos3reader"] {
+  }
+  class BundledSha256["BundledSha256"] {
+  }
+  class Config["Config"] {
+    +endpoint : String
+    +maxAttempts : Integer
+    +pathStyle : Boolean
+    +region : String
+  }
+  class CredentialProvider["CredentialProvider"] {
+    +credSource : «port» CredentialSourcePort
+  }
+  class MbedTlsTls["MbedTlsTls"] {
+  }
+  class OpenSslSha256["OpenSslSha256"] {
+  }
+  class OpenSslTls["OpenSslTls"] {
+  }
+  class S3IStream["S3IStream"] {
+    +reads : «port» ByteRangeReadPort
+  }
+  class S3MinStreamFactory["S3MinStreamFactory"] {
+    +caller : «interface» ByteRangeReadStream
+  }
+  class S3Streambuf["S3Streambuf"] {
+    +http : «port» ByteRangeReadPort
+    +reachedEof : Boolean
+    +readAhead : Integer
+    +windowLen : Integer
+    +windowStart : Integer
+  }
+  class Sha256Backend["Sha256Backend"] {
+  }
+  class TlsBackend["TlsBackend"] {
+  }
+  Sha256Backend <|-- BundledSha256
+  TlsBackend <|-- MbedTlsTls
+  Sha256Backend <|-- OpenSslSha256
+  TlsBackend <|-- OpenSslTls
+  Nanos3reader *-- S3MinStreamFactory : factory
+  S3MinStreamFactory *-- Config : config
+  S3MinStreamFactory *-- CredentialProvider : creds
+  S3MinStreamFactory *-- S3IStream : stream
+  S3MinStreamFactory *-- S3Streambuf : buf
+  S3MinStreamFactory *-- Sha256Backend : crypto
+  S3MinStreamFactory *-- TlsBackend : tls

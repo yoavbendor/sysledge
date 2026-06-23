@@ -1,0 +1,22 @@
+flowchart LR
+  classDef req fill:#fdedec,stroke:#cb4335,color:#7b241c;
+  classDef impl fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  subgraph impl["Implementation (Logical/Physical)"]
+  I_eventBus(["eventBus"]):::impl
+  I_integrationLayer(["integrationLayer"]):::impl
+  I_patientInformation(["patientInformation"]):::impl
+  I_scheduling(["scheduling"]):::impl
+  I_serviceMesh(["serviceMesh"]):::impl
+  end
+  subgraph reqs["Requirements"]
+  R_FaultTolerance["FaultTolerance"]:::req
+  R_GdprAdherence["GdprAdherence"]:::req
+  R_NhsInteroperability["NhsInteroperability"]:::req
+  R_SubSecondBedAvailability["SubSecondBedAvailability"]:::req
+  R_ZeroDisruptionMigration["ZeroDisruptionMigration"]:::req
+  end
+  I_eventBus -->|satisfies| R_FaultTolerance
+  I_integrationLayer -->|satisfies| R_NhsInteroperability
+  I_patientInformation -->|satisfies| R_GdprAdherence
+  I_scheduling -->|satisfies| R_SubSecondBedAvailability
+  I_serviceMesh -->|satisfies| R_ZeroDisruptionMigration

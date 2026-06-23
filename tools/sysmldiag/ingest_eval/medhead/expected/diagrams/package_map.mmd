@@ -1,0 +1,44 @@
+flowchart TD
+  classDef lreq fill:#fdedec,stroke:#cb4335,color:#7b241c;
+  classDef lfun fill:#fef5e7,stroke:#ca6f1e,color:#7e5109;
+  classDef llog fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  classDef lphy fill:#eafaf1,stroke:#229954,color:#145a32;
+  classDef lnone fill:#f4f6f7,stroke:#909497,color:#515a5a;
+  subgraph pkg_Concepts["Concepts"]
+    Concepts__ByteRangeReadPort["ByteRangeReadPort"]:::llog
+    Concepts__ByteRangeReadStream["ByteRangeReadStream"]:::llog
+    Concepts__CredentialSourcePort["CredentialSourcePort"]:::llog
+    Concepts__Provenance["Provenance"]:::lnone
+  end
+  subgraph pkg_MedHead["MedHead"]
+    MedHead__AccessUsabilityLayer["AccessUsabilityLayer"]:::llog
+    MedHead__AllocateBed["AllocateBed"]:::lnone
+    MedHead__Appointments["Appointments"]:::llog
+    MedHead__ClientAccessTier["ClientAccessTier"]:::llog
+    MedHead__DataIngestPort["DataIngestPort"]:::llog
+    MedHead__DataLake["DataLake"]:::llog
+    MedHead__EmergencySystemsTier["EmergencySystemsTier"]:::llog
+    MedHead__EventBus["EventBus"]:::llog
+    MedHead__EventPort["EventPort"]:::llog
+    MedHead__FaultTolerance["FaultTolerance"]:::lreq
+    MedHead__GdprAdherence["GdprAdherence"]:::lreq
+    MedHead__IntegrationLayer["IntegrationLayer"]:::llog
+    MedHead__MedHeadSystem["MedHeadSystem"]:::llog
+    MedHead__MedicalHistory["MedicalHistory"]:::llog
+    MedHead__MedicalSpecialist["MedicalSpecialist"]:::llog
+    MedHead__NhsInteroperability["NhsInteroperability"]:::lreq
+    MedHead__PatientInformation["PatientInformation"]:::llog
+    MedHead__ProviderManagement["ProviderManagement"]:::llog
+    MedHead__Rosters["Rosters"]:::llog
+    MedHead__Scheduling["Scheduling"]:::llog
+    MedHead__ServiceMesh["ServiceMesh"]:::llog
+    MedHead__Specialism["Specialism"]:::llog
+    MedHead__SubSecondBedAvailability["SubSecondBedAvailability"]:::lreq
+    MedHead__ZeroDisruptionMigration["ZeroDisruptionMigration"]:::lreq
+  end
+  subgraph pkg_ScalarValues["ScalarValues"]
+    ScalarValues__Boolean["Boolean"]:::llog
+    ScalarValues__Integer["Integer"]:::llog
+    ScalarValues__Real["Real"]:::llog
+    ScalarValues__String["String"]:::llog
+  end

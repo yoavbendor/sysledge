@@ -1,0 +1,81 @@
+classDiagram
+  class AccessUsabilityLayer["AccessUsabilityLayer"] {
+    +accessControl : String
+    +userInterfaces : String
+  }
+  class Appointments["Appointments"] {
+    +bookingRecords : String
+    +events : «port» EventPort
+  }
+  class ClientAccessTier["ClientAccessTier"] {
+    +clientEndpoints : String
+  }
+  class DataLake["DataLake"] {
+    +analyticsData : String
+    +ingest : «port» DataIngestPort
+  }
+  class EmergencySystemsTier["EmergencySystemsTier"] {
+    +emergencyProtocols : String
+    +failoverMechanisms : String
+  }
+  class EventBus["EventBus"] {
+    +eventTopics : String
+    +feed : «port» EventPort
+  }
+  class IntegrationLayer["IntegrationLayer"] {
+    +complianceFramework : String
+    +externalIntegrations : String
+  }
+  class MedHeadSystem["MedHeadSystem"] {
+  }
+  class MedicalHistory["MedicalHistory"] {
+    +clinicalRecords : String
+    +events : «port» EventPort
+  }
+  class MedicalSpecialist["MedicalSpecialist"] {
+    +events : «port» EventPort
+    +practitionerId : String
+    +specialisms : String
+  }
+  class PatientInformation["PatientInformation"] {
+    +demographics : String
+    +events : «port» EventPort
+    +patientId : String
+  }
+  class ProviderManagement["ProviderManagement"] {
+    +capabilities : String
+    +events : «port» EventPort
+    +providerId : String
+  }
+  class Rosters["Rosters"] {
+    +events : «port» EventPort
+    +onCallAssignments : String
+    +rosterData : String
+  }
+  class Scheduling["Scheduling"] {
+    +allocationStrategy : String
+    +bedAvailability : String
+    +events : «port» EventPort
+  }
+  class ServiceMesh["ServiceMesh"] {
+    +proxyConfig : String
+  }
+  class Specialism["Specialism"] {
+    +events : «port» EventPort
+    +specialismCatalogue : String
+  }
+  MedHeadSystem *-- AccessUsabilityLayer : accessUsabilityLayer
+  MedHeadSystem *-- Appointments : appointments
+  MedHeadSystem *-- ClientAccessTier : clientAccessTier
+  MedHeadSystem *-- DataLake : dataLake
+  MedHeadSystem *-- EmergencySystemsTier : emergencySystemsTier
+  MedHeadSystem *-- EventBus : eventBus
+  MedHeadSystem *-- IntegrationLayer : integrationLayer
+  MedHeadSystem *-- MedicalHistory : medicalHistory
+  MedHeadSystem *-- MedicalSpecialist : medicalSpecialist
+  MedHeadSystem *-- PatientInformation : patientInformation
+  MedHeadSystem *-- ProviderManagement : providerManagement
+  MedHeadSystem *-- Rosters : rosters
+  MedHeadSystem *-- Scheduling : scheduling
+  MedHeadSystem *-- ServiceMesh : serviceMesh
+  MedHeadSystem *-- Specialism : specialism

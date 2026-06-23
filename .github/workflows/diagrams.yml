@@ -1,0 +1,64 @@
+name: diagrams
+
+# Two gates for the sysmldiag component (docs/diagrams.md):
+#  1. Layer A — deterministic renderer tests (no LLM, no network). Fast.
+#  2. Freshness — regenerate diagrams from the model and fail if the committed
+#     Mermaid is stale, so reports/diagrams/ always reflects the model. Rendered
+#     SVGs are uploaded as artifacts (raster output is not byte-stable, so it is
+#     not diff-checked).
+# The optional Layer B ingestion eval (LLM) is intentionally NOT run here.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  renderer-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Layer A — deterministic renderer tests
+        run: PYTHONPATH=tools python3 -m unittest sysmldiag.tests.test_sysmldiag
+
+  diagrams-fresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install nomograph-sysml
+        run: cargo install sysml-cli
+
+      - name: Install mermaid-cli (for SVG export)
+        run: npm install -g @mermaid-js/mermaid-cli
+
+      - name: Build knowledge-graph index
+        run: nomograph-sysml index lib models --output .nomograph/index.json
+
+      - name: Regenerate diagrams (+ SVG)
+        run: bash .nomograph/scripts/diagrams.sh
+
+      - name: Fail if committed Mermaid is stale
+        run: |
+          if ! git diff --quiet -- reports/diagrams/'*.mmd' reports/diagrams/diagrams.md; then
+            echo "::error::reports/diagrams is stale — run 'bash .nomograph/scripts/diagrams.sh' and commit."
+            git --no-pager diff -- reports/diagrams/'*.mmd' reports/diagrams/diagrams.md
+            exit 1
+          fi
+
+      - name: Upload rendered SVGs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-diagrams-svg
+          path: reports/diagrams/svg/*.svg
+          if-no-files-found: warn

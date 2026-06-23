@@ -1,0 +1,52 @@
+flowchart LR
+  classDef verified fill:#d5f5e3,stroke:#27ae60,color:#145a32;
+  classDef partial  fill:#fdebd0,stroke:#e67e22,color:#7e5109;
+  classDef orphan   fill:#f2f3f4,stroke:#85929e,color:#424949;
+  classDef part     fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  classDef vcase    fill:#f4ecf7,stroke:#8e44ad,color:#4a235a;
+  P_factory(["factory"]):::part
+  R_Nanos3readerRequirements__ReadOnlyByDesign["ReadOnlyByDesign"]:::partial
+  P_factory -->|satisfies| R_Nanos3readerRequirements__ReadOnlyByDesign
+  P_factory_buf(["factory.buf"]):::part
+  R_Nanos3readerRequirements__KeepAlivePerObject["KeepAlivePerObject"]:::partial
+  P_factory_buf -->|satisfies| R_Nanos3readerRequirements__KeepAlivePerObject
+  R_Nanos3readerRequirements__RangeGet["RangeGet"]:::verified
+  P_factory_buf -->|satisfies| R_Nanos3readerRequirements__RangeGet
+  R_Nanos3readerRequirements__ReadAhead["ReadAhead"]:::verified
+  P_factory_buf -->|satisfies| R_Nanos3readerRequirements__ReadAhead
+  R_Nanos3readerRequirements__RetryWithBackoff["RetryWithBackoff"]:::partial
+  P_factory_buf -->|satisfies| R_Nanos3readerRequirements__RetryWithBackoff
+  R_Nanos3readerRequirements__WrongRegionRedirect["WrongRegionRedirect"]:::partial
+  P_factory_buf -->|satisfies| R_Nanos3readerRequirements__WrongRegionRedirect
+  P_factory_config(["factory.config"]):::part
+  R_Nanos3readerRequirements__S3CompatibleStores["S3CompatibleStores"]:::verified
+  P_factory_config -->|satisfies| R_Nanos3readerRequirements__S3CompatibleStores
+  P_factory_creds(["factory.creds"]):::part
+  R_Nanos3readerRequirements__CredentialChain["CredentialChain"]:::partial
+  P_factory_creds -->|satisfies| R_Nanos3readerRequirements__CredentialChain
+  R_Nanos3readerRequirements__RefreshTemporaryCredentials["RefreshTemporaryCredentials"]:::partial
+  P_factory_creds -->|satisfies| R_Nanos3readerRequirements__RefreshTemporaryCredentials
+  R_Nanos3readerRequirements__SelfExplainingCredentialFailure["SelfExplainingCredentialFailure"]:::partial
+  P_factory_creds -->|satisfies| R_Nanos3readerRequirements__SelfExplainingCredentialFailure
+  P_factory_crypto(["factory.crypto"]):::part
+  R_Nanos3readerRequirements__MinimalDependencies["MinimalDependencies"]:::partial
+  P_factory_crypto -->|satisfies| R_Nanos3readerRequirements__MinimalDependencies
+  R_Nanos3readerRequirements__SelectableCryptoBackend["SelectableCryptoBackend"]:::verified
+  P_factory_crypto -->|satisfies| R_Nanos3readerRequirements__SelectableCryptoBackend
+  R_Nanos3readerRequirements__SigV4Signing["SigV4Signing"]:::verified
+  P_factory_crypto -->|satisfies| R_Nanos3readerRequirements__SigV4Signing
+  P_factory_stream(["factory.stream"]):::part
+  R_Nanos3readerRequirements__SeekableStream["SeekableStream"]:::verified
+  P_factory_stream -->|satisfies| R_Nanos3readerRequirements__SeekableStream
+  P_factory_tls(["factory.tls"]):::part
+  R_Nanos3readerRequirements__SmallStaticBuild["SmallStaticBuild"]:::partial
+  P_factory_tls -->|satisfies| R_Nanos3readerRequirements__SmallStaticBuild
+  V_Nanos3readerVerification__cryptoBackendParity[/"cryptoBackendParity"/]:::vcase
+  V_Nanos3readerVerification__cryptoBackendParity -.->|verifies| R_Nanos3readerRequirements__SelectableCryptoBackend
+  V_Nanos3readerVerification__minioIntegration[/"minioIntegration"/]:::vcase
+  V_Nanos3readerVerification__minioIntegration -.->|verifies| R_Nanos3readerRequirements__RangeGet
+  V_Nanos3readerVerification__minioIntegration -.->|verifies| R_Nanos3readerRequirements__ReadAhead
+  V_Nanos3readerVerification__minioIntegration -.->|verifies| R_Nanos3readerRequirements__S3CompatibleStores
+  V_Nanos3readerVerification__minioIntegration -.->|verifies| R_Nanos3readerRequirements__SeekableStream
+  V_Nanos3readerVerification__sigv4KnownAnswer[/"sigv4KnownAnswer"/]:::vcase
+  V_Nanos3readerVerification__sigv4KnownAnswer -.->|verifies| R_Nanos3readerRequirements__SigV4Signing

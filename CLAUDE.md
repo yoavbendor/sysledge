@@ -30,6 +30,14 @@ nomograph-sysml stat                             # health dashboard (--badge for
 bash .nomograph/scripts/diagrams.sh              # Mermaid diagrams -> reports/diagrams/ (graphical view)
 ```
 
+**Diagrams (graphical view).** `tools/sysmldiag` derives Mermaid diagrams from the index — one per SysML
+aspect (requirements, BDD, IBD, behavior, model map, allocation), no LLM in the rendering path. Open
+`reports/diagrams/diagrams.md` (renders inline on GitHub). To "show the model graphically", run the
+script above or `PYTHONPATH=tools python3 -m sysmldiag --views all`. Views deliberately surface gaps
+(unverified requirements, missing connections/flow). Full reference: `docs/diagrams.md`. Tests:
+`PYTHONPATH=tools python3 -m unittest sysmldiag.tests.test_sysmldiag` (deterministic; the optional
+LLM-based ingestion eval under `tools/sysmldiag/ingest_eval/` uses a small model — Haiku 4.5).
+
 ## The maintenance loop (Domain 2)
 
 Every change is one of these verbs; each ends at the "done" gate in `docs/conventions.md`:
