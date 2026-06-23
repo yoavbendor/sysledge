@@ -77,15 +77,31 @@ fi
 
 # ---- 2. sysmldiag (Python) -----------------------------------------------------------
 if [ "$DO_PIP" -eq 1 ]; then
-  say "Installing the sysmldiag package (editable, via $INSTALLER)"
+  say "Installing the sysmldiag package (via $INSTALLER)"
+  installed=0
   if [ "$INSTALLER" = uv ]; then
-    # Install into the active venv if there is one, else into the system interpreter.
-    if [ -n "${VIRTUAL_ENV:-}" ]; then uv pip install -e .; else uv pip install --system -e .; fi
+    if [ -n "${VIRTUAL_ENV:-}" ]; then
+      # Active venv: editable install into it.
+      if uv pip install -e .; then installed=1; fi
+    else
+      # No venv: install the CLI into the user's tool dir (~/.local/bin) — no root,
+      # no writes to the system interpreter. Editable so `git pull` updates it.
+      if uv tool install --editable .; then installed=1; fi
+    fi
   else
-    python3 -m pip install -e .
-  fi \
-    && ok "installed; console scripts: sysmldiag, sysmldiag-llm" \
-    || warn "install failed; you can still run: PYTHONPATH=tools python3 -m sysmldiag"
+    if [ -n "${VIRTUAL_ENV:-}" ] || [ "$(id -u)" = 0 ]; then
+      if python3 -m pip install -e .; then installed=1; fi
+    else
+      # No venv and not root: install into the user site (~/.local) to avoid EACCES.
+      if python3 -m pip install --user -e .; then installed=1; fi
+    fi
+  fi
+  if [ "$installed" -eq 1 ]; then
+    ok "installed console scripts: sysmldiag, sysmldiag-llm"
+    have sysmldiag || warn "if 'sysmldiag' isn't found, add ~/.local/bin to PATH (uv: run 'uv tool update-shell')."
+  else
+    warn "install failed; you can still run: PYTHONPATH=tools python3 -m sysmldiag"
+  fi
 else
   say "Skipping package install (--no-pip) — use: PYTHONPATH=tools python3 -m sysmldiag"
 fi
@@ -115,19 +131,18 @@ PYTHONPATH=tools python3 -m unittest discover -s tools/sysmldiag/tests -p 'test_
 if have nomograph-sysml; then
   bash .nomograph/scripts/validate-model.sh . >/dev/null && ok "all SysML valid"
   nomograph-sysml index lib models --output .nomograph/index.json >/dev/null && ok "index built"
-  if have sysmldiag; then FMT=$([ "$DO_SVG" -eq 1 ] && echo both || echo mermaid)
-    sysmldiag --format "$FMT" >/dev/null && ok "diagrams generated -> reports/diagrams/"
-  else
-    PYTHONPATH=tools python3 -m sysmldiag >/dev/null && ok "diagrams generated -> reports/diagrams/"
-  fi
+  # Verify via the source tree (PYTHONPATH) so this works regardless of where the
+  # console script was installed / whether ~/.local/bin is on PATH yet.
+  FMT=$([ "$DO_SVG" -eq 1 ] && echo both || echo mermaid)
+  PYTHONPATH=tools python3 -m sysmldiag --format "$FMT" >/dev/null \
+    && ok "diagrams generated -> reports/diagrams/"
 else
   warn "nomograph-sysml missing — skipped index/diagram verification."
 fi
 
 if [ "$DO_CHECK_LLM" -eq 1 ]; then
   say "Checking LLM provider"
-  if have sysmldiag-llm; then sysmldiag-llm --check || true
-  else PYTHONPATH=tools python3 -m sysmldiag.llm --check || true; fi
+  PYTHONPATH=tools python3 -m sysmldiag.llm --check || true
 fi
 
 say "Done"

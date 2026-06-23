@@ -56,27 +56,34 @@ nomograph-sysml --version
 
 ### 2b. sysmldiag (required)
 
-Install it as a package to get the `sysmldiag` / `sysmldiag-llm` console scripts on
-PATH. **uv is the recommended installer:**
+Install it as a package to get the `sysmldiag` / `sysmldiag-llm` console scripts.
+**uv is the recommended installer.** On a shared dev host without root, use one of
+the user-space options (do **not** use `--system`, which writes to `/usr` and needs
+root):
 
 ```bash
-# uv — project-native: creates/uses a managed venv automatically
-uv run sysmldiag --help                 # auto-installs the project, then runs
-uv run python -m unittest sysmldiag.tests.test_sysmldiag sysmldiag.tests.test_llm
+# uv — install the CLIs into ~/.local/bin (no root, no venv to activate). Recommended.
+uv tool install --editable .
+uv tool update-shell          # one-time: ensure ~/.local/bin is on PATH
+sysmldiag --help
 
-# uv — into an explicit venv
+# uv — or into an explicit project venv
 uv venv && source .venv/bin/activate
 uv pip install -e .
 
-# uv — into the system interpreter (no venv)
+# uv — or just run from the project venv without installing globally
+uv run sysmldiag --help       # auto-creates .venv and installs the project
+
+# uv — system interpreter (CI / containers where you own /usr or are root)
 uv pip install --system -e .
 ```
 
 Plain pip works too (fallback):
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate   # venv recommended
-python3 -m pip install -e .
+python3 -m pip install --user -e .                   # user site (~/.local), no root
+# or, inside a venv:
+python3 -m venv .venv && source .venv/bin/activate && python3 -m pip install -e .
 ```
 
 Or run with no install at all, straight from the source tree:
@@ -194,9 +201,16 @@ internals and testing.
 
 ## 6. Troubleshooting
 
-- **`sysmldiag: command not found`** — pip installed to a user dir not on PATH, or
-  you skipped pip. Use `PYTHONPATH=tools python3 -m sysmldiag …`, or add the pip
-  scripts dir to PATH (`python3 -m site --user-base`/bin).
+- **`Permission denied … /usr/local/lib/python3.x/dist-packages`** (or `/usr/...`)
+  — an install tried to write to the system interpreter without root. On a shared
+  host use a user-space install: `uv tool install --editable .` (uv) or
+  `python3 -m pip install --user -e .` (pip). `scripts/install.sh` now does this
+  automatically when no venv is active and you're not root. Avoid `uv pip install
+  --system` unless you own `/usr`.
+- **`sysmldiag: command not found`** after a user-space install — `~/.local/bin`
+  isn't on PATH. Run `uv tool update-shell` (uv) and restart the shell, or add it:
+  `export PATH="$HOME/.local/bin:$PATH"`. You can always fall back to
+  `PYTHONPATH=tools python3 -m sysmldiag …`.
 - **`cargo: command not found`** — install Rust from <https://rustup.rs>, restart
   the shell, re-run.
 - **`mmdc` fails to launch Chromium** — container/sandbox issue; the bundled

@@ -104,3 +104,15 @@ No model facts changed; the SysML `validate` gate is untouched.
 - CI `renderer-tests` now uses `astral-sh/setup-uv` + `uv run`, exercising the uv install path.
 - `INSTALL.md` documents `uv run` / `uv venv` / `uv pip --system`, with pip as fallback.
 - `uv.lock` committed (zero third-party deps; marks the repo as a uv project for reproducible runs).
+
+## 2026-06-23 — Fix: install without root on a shared host
+
+**Verb:** Fix (tooling). `uv pip install --system` failed with EACCES on a shared dev host
+(non-root, no venv) trying to write `/usr/local/lib/python3.10/dist-packages`.
+
+- `scripts/install.sh`: when no venv is active, uv now uses `uv tool install --editable .`
+  (installs the CLIs into `~/.local/bin`, no root); pip fallback uses `--user`. `--system`
+  is used only inside an active venv or as root. Verify step now runs via `PYTHONPATH`,
+  so it's independent of where the console scripts landed / PATH propagation.
+- `INSTALL.md`: lead with the user-space uv flow (`uv tool install`); added a troubleshooting
+  entry for the EACCES/`command not found` cases.
