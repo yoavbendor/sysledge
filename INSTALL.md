@@ -25,12 +25,15 @@ From the repo root:
 bash scripts/install.sh
 ```
 
-Idempotent and re-runnable. Useful flags:
+It uses **[uv](https://docs.astral.sh/uv/)** automatically when it's on PATH
+(falling back to plain pip otherwise). Idempotent and re-runnable. Useful flags:
 
 ```bash
+bash scripts/install.sh --uv         # force uv (default when uv is installed)
+bash scripts/install.sh --pip        # force plain pip instead of uv
 bash scripts/install.sh --no-rust    # nomograph-sysml already installed
 bash scripts/install.sh --no-svg     # skip mermaid-cli (use .mmd / GitHub rendering)
-bash scripts/install.sh --no-pip     # don't pip-install; use PYTHONPATH instead
+bash scripts/install.sh --no-pip     # don't install the package; use PYTHONPATH instead
 bash scripts/install.sh --check-llm  # also ping the configured LLM provider
 ```
 
@@ -53,22 +56,34 @@ nomograph-sysml --version
 
 ### 2b. sysmldiag (required)
 
-Either install it as a package (gives you the `sysmldiag` / `sysmldiag-llm`
-console scripts on PATH):
+Install it as a package to get the `sysmldiag` / `sysmldiag-llm` console scripts on
+PATH. **uv is the recommended installer:**
 
 ```bash
-python3 -m pip install -e .          # from the repo root
-sysmldiag --help
+# uv — project-native: creates/uses a managed venv automatically
+uv run sysmldiag --help                 # auto-installs the project, then runs
+uv run python -m unittest sysmldiag.tests.test_sysmldiag sysmldiag.tests.test_llm
+
+# uv — into an explicit venv
+uv venv && source .venv/bin/activate
+uv pip install -e .
+
+# uv — into the system interpreter (no venv)
+uv pip install --system -e .
 ```
 
-…or run it without installing, straight from the source tree:
+Plain pip works too (fallback):
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate   # venv recommended
+python3 -m pip install -e .
+```
+
+Or run with no install at all, straight from the source tree:
 
 ```bash
 PYTHONPATH=tools python3 -m sysmldiag --help
 ```
-
-> A virtualenv is recommended: `python3 -m venv .venv && source .venv/bin/activate`
-> before `pip install -e .`.
 
 ### 2c. mermaid-cli (optional — for SVG)
 

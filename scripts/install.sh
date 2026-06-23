@@ -8,24 +8,28 @@
 #   3. mermaid-cli (mmdc)   (optional: render diagrams to SVG)            [needs npm]
 # then verifies the install end-to-end.
 #
-# Usage:  scripts/install.sh [--no-rust] [--no-svg] [--no-pip] [--check-llm] [-h]
+# Usage:  scripts/install.sh [--no-rust] [--no-svg] [--no-pip] [--uv|--pip] [--check-llm] [-h]
 #
 #   --no-rust    skip installing nomograph-sysml (already present / installed elsewhere)
 #   --no-svg     skip mermaid-cli (you only need the .mmd / GitHub-rendered diagrams)
-#   --no-pip     don't pip-install; use `PYTHONPATH=tools python3 -m sysmldiag` instead
+#   --no-pip     don't install the package; use `PYTHONPATH=tools python3 -m sysmldiag`
+#   --uv         force the uv installer (default when uv is on PATH)
+#   --pip        force plain pip even if uv is available
 #   --check-llm  after install, ping the configured LLM provider (needs a key set)
 #   -h|--help    this help
 #
 set -euo pipefail
 
-DO_RUST=1 DO_SVG=1 DO_PIP=1 DO_CHECK_LLM=0
+DO_RUST=1 DO_SVG=1 DO_PIP=1 DO_CHECK_LLM=0 FORCE_INSTALLER=""
 for arg in "$@"; do
   case "$arg" in
     --no-rust) DO_RUST=0 ;;
     --no-svg)  DO_SVG=0 ;;
     --no-pip)  DO_PIP=0 ;;
+    --uv)      FORCE_INSTALLER=uv ;;
+    --pip)     FORCE_INSTALLER=pip ;;
     --check-llm) DO_CHECK_LLM=1 ;;
-    -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,24p' "$0"; exit 0 ;;
     *) echo "unknown option: $arg" >&2; exit 2 ;;
   esac
 done
@@ -46,6 +50,15 @@ python3 -c 'import sys;exit(0 if sys.version_info[:2]>=(3,10) else 1)' \
   || { echo "python3 >=3.10 required, found $PYV." >&2; exit 1; }
 ok "python3 $PYV"
 
+# Choose the Python installer: uv (preferred) unless forced or absent.
+INSTALLER="$FORCE_INSTALLER"
+if [ -z "$INSTALLER" ]; then INSTALLER=$(have uv && echo uv || echo pip); fi
+if [ "$INSTALLER" = uv ] && ! have uv; then
+  warn "uv requested but not found — falling back to pip (get uv: https://docs.astral.sh/uv/)."
+  INSTALLER=pip
+fi
+ok "python installer: $INSTALLER$( [ "$INSTALLER" = uv ] && echo " ($(uv --version))" )"
+
 # ---- 1. nomograph-sysml --------------------------------------------------------------
 if [ "$DO_RUST" -eq 1 ]; then
   say "Installing nomograph-sysml"
@@ -64,12 +77,17 @@ fi
 
 # ---- 2. sysmldiag (Python) -----------------------------------------------------------
 if [ "$DO_PIP" -eq 1 ]; then
-  say "Installing the sysmldiag package (editable)"
-  python3 -m pip install -e . \
+  say "Installing the sysmldiag package (editable, via $INSTALLER)"
+  if [ "$INSTALLER" = uv ]; then
+    # Install into the active venv if there is one, else into the system interpreter.
+    if [ -n "${VIRTUAL_ENV:-}" ]; then uv pip install -e .; else uv pip install --system -e .; fi
+  else
+    python3 -m pip install -e .
+  fi \
     && ok "installed; console scripts: sysmldiag, sysmldiag-llm" \
-    || { warn "pip install failed; you can still run: PYTHONPATH=tools python3 -m sysmldiag"; }
+    || warn "install failed; you can still run: PYTHONPATH=tools python3 -m sysmldiag"
 else
-  say "Skipping pip install (--no-pip) — use: PYTHONPATH=tools python3 -m sysmldiag"
+  say "Skipping package install (--no-pip) — use: PYTHONPATH=tools python3 -m sysmldiag"
 fi
 
 # ---- 3. mermaid-cli (optional SVG) ---------------------------------------------------

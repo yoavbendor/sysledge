@@ -94,3 +94,13 @@ optional agent LLM access to Anthropic **and** OpenAI with bring-your-own-key.
   CI now runs the whole `tools/sysmldiag/tests` suite by discovery (17 tests, green).
 
 No model facts changed; the SysML `validate` gate is untouched.
+
+## 2026-06-23 — Tooling: prefer uv for install + CI
+
+**Verb:** Refactor (tooling). Adopt [uv](https://docs.astral.sh/uv/) as the preferred installer.
+
+- `scripts/install.sh` auto-detects uv (`uv pip install`, venv-aware) and falls back to pip;
+  `--uv`/`--pip` force either. Verified end-to-end in-sandbox (uv 0.8.17).
+- CI `renderer-tests` now uses `astral-sh/setup-uv` + `uv run`, exercising the uv install path.
+- `INSTALL.md` documents `uv run` / `uv venv` / `uv pip --system`, with pip as fallback.
+- `uv.lock` committed (zero third-party deps; marks the repo as a uv project for reproducible runs).
