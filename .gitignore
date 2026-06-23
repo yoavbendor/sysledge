@@ -1,2 +1,8 @@
 # Regenerable knowledge-graph index (rebuilt by `nomograph-sysml index` and CI).
 .nomograph/index.json
+
+# Python build/install artefacts (sysmldiag is installed editable via pyproject.toml).
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/

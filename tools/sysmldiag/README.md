@@ -36,10 +36,14 @@ ingest_eval/    Layer B: optional doc -> SysML -> diagram eval (LLM)
 **Layer A — deterministic (CI gate):**
 
 ```
-PYTHONPATH=tools python3 -m unittest sysmldiag.tests.test_sysmldiag
+PYTHONPATH=tools python3 -m unittest discover -s tools/sysmldiag/tests -p 'test_*.py' -t tools
 # update goldens after an intentional change:
 PYTHONPATH=tools python3 -m sysmldiag.tests.test_sysmldiag --update-golden
 ```
+
+Install as a package (console scripts `sysmldiag`, `sysmldiag-llm`) and configure
+the optional LLM providers (Anthropic / OpenAI / local, bring-your-own-key): see
+[`INSTALL.md`](../../INSTALL.md).
 
 **Layer B — optional ingestion eval (LLM, small/cheap by policy):**
 

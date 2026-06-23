@@ -18,11 +18,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.11"
+      # `uv run` installs the package (editable) into a managed venv, then runs the
+      # tests — exercising the uv-based install path end-to-end.
       - name: Layer A — deterministic renderer tests
-        run: PYTHONPATH=tools python3 -m unittest sysmldiag.tests.test_sysmldiag
+        run: uv run python -m unittest sysmldiag.tests.test_sysmldiag sysmldiag.tests.test_llm
 
   diagrams-fresh:
     runs-on: ubuntu-latest
