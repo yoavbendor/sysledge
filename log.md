@@ -28,3 +28,17 @@ integration + crypto-backend parity only). See `reports/traceability-matrix.md` 
 
 **Decisions applied:** monorepo (more GitLab systems to follow); raw stored as a git-revision manifest
 (S3 deferred); `satisfy`/`verify` target requirement definitions (nomograph is definition-centric).
+
+---
+
+## 2026-06-23 — Widen: graphical rendering
+
+**Verb:** Widen (presentation). Added on-demand graphical views of the models for humans:
+
+- `.nomograph/scripts/diagrams.sh` derives **Mermaid** diagrams from the knowledge graph
+  (satisfy/verify/specialize) → `reports/diagrams/{traceability,structure-variants}.mmd` and a
+  GitHub-renderable `diagrams.md`. Traceability nodes are coloured green=verified / amber=unverified.
+- Also generated nomograph's own outputs: `reports/traceability-matrix.html` and `reports/health-badge.svg`.
+
+nomograph's native `render` is tabular (markdown/html/csv) + an SVG badge; box-and-arrow diagrams come
+from the Mermaid derivation. Documented as a standard operation in docs/conventions.md.

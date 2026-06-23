@@ -1,0 +1,23 @@
+<html><head><title>Traceability Matrix</title>
+<style>table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f4f4f4}.gap{background:#fee}.ok{background:#efe}</style>
+</head><body>
+<h1>Traceability Matrix</h1>
+<table><thead><tr><th>Requirement</th><th>Kind</th><th>Satisfied By</th><th>Verified By</th><th>Status</th></tr></thead><tbody>
+<tr class="ok"><td>SeekableStream</td><td>requirement_definition</td><td>factory.stream</td><td>minioIntegration</td><td>complete</td></tr>
+<tr class="ok"><td>RangeGet</td><td>requirement_definition</td><td>factory.buf</td><td>minioIntegration</td><td>complete</td></tr>
+<tr class="ok"><td>ReadAhead</td><td>requirement_definition</td><td>factory.buf</td><td>minioIntegration</td><td>complete</td></tr>
+<tr class="ok"><td>KeepAlivePerObject</td><td>requirement_definition</td><td>factory.buf</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>SigV4Signing</td><td>requirement_definition</td><td>factory.crypto</td><td>sigv4KnownAnswer</td><td>complete</td></tr>
+<tr class="ok"><td>CredentialChain</td><td>requirement_definition</td><td>factory.creds</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>RefreshTemporaryCredentials</td><td>requirement_definition</td><td>factory.creds</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>SelfExplainingCredentialFailure</td><td>requirement_definition</td><td>factory.creds</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>S3CompatibleStores</td><td>requirement_definition</td><td>factory.config</td><td>minioIntegration</td><td>complete</td></tr>
+<tr class="ok"><td>WrongRegionRedirect</td><td>requirement_definition</td><td>factory.buf</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>RetryWithBackoff</td><td>requirement_definition</td><td>factory.buf</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>MinimalDependencies</td><td>requirement_definition</td><td>factory.crypto</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>SelectableCryptoBackend</td><td>requirement_definition</td><td>factory.crypto</td><td>cryptoBackendParity</td><td>complete</td></tr>
+<tr class="ok"><td>SmallStaticBuild</td><td>requirement_definition</td><td>factory.tls</td><td></td><td>partial</td></tr>
+<tr class="ok"><td>ReadOnlyByDesign</td><td>requirement_definition</td><td>factory</td><td></td><td>partial</td></tr>
+</tbody></table>
+<p><strong>Summary</strong>: 15 requirements, 15 satisfied, 6 verified (70% coverage)</p>
+</body></html>

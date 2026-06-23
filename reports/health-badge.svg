@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="227" height="20" role="img" aria-label="model health: 40% (127E / 224R)">
+  <title>model health: 40% (127E / 224R)</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r"><rect width="227" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="96" height="20" fill="#555"/>
+    <rect x="96" width="131" height="20" fill="#e05d44"/>
+    <rect width="227" height="20" fill="url(#s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" text-rendering="geometricPrecision" font-size="11">
+    <text x="48" y="15" fill="#010101" fill-opacity=".3">model health</text>
+    <text x="48" y="14" fill="#fff">model health</text>
+    <text x="161.5" y="15" fill="#010101" fill-opacity=".3">40% (127E / 224R)</text>
+    <text x="161.5" y="14" fill="#fff">40% (127E / 224R)</text>
+  </g>
+</svg>

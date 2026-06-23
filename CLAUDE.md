@@ -25,8 +25,9 @@ nomograph-sysml validate <files>                 # syntax gate (must be valid:tr
 nomograph-sysml index lib models --output .nomograph/index.json
 nomograph-sysml search "<text>" | trace <el> | inspect <el> | query --rel satisfy
 nomograph-sysml check all --detail               # completeness/lint
-nomograph-sysml render --template traceability-matrix
-nomograph-sysml stat                             # health dashboard
+nomograph-sysml render --template traceability-matrix   # tables: markdown|html|csv
+nomograph-sysml stat                             # health dashboard (--badge for SVG)
+bash .nomograph/scripts/diagrams.sh              # Mermaid diagrams -> reports/diagrams/ (graphical view)
 ```
 
 ## The maintenance loop (Domain 2)

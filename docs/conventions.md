@@ -88,6 +88,27 @@ part def Reader {
 
 Anything duplicated across ≥2 systems gets promoted into `lib/` by the librarian step.
 
+## Showing models graphically (on request)
+
+The models are graph data, so they can be drawn for humans on demand — this is a standard operation:
+
+- **Diagrams (box-and-arrow).** `nomograph-sysml` itself renders tables and an SVG badge, **not** diagrams,
+  so `.nomograph/scripts/diagrams.sh` derives **Mermaid** diagrams from the graph (satisfy / verify /
+  specialize relationships) into `reports/diagrams/`:
+  - `traceability.mmd` — requirements with their satisfying part and verifying test; requirement nodes are
+    coloured **green = verified**, **amber = satisfied-but-unverified** (the honest gaps show up visually).
+  - `structure-variants.mmd` — the variation points (crypto/TLS backends).
+  - `diagrams.md` — the same diagrams in ` ```mermaid ` fences, which **GitHub / GitLab / VS Code render
+    inline with no tooling**. This is the default way to show a model graphically.
+- **Tables, styled.** `nomograph-sysml render --template traceability-matrix --render-format html` →
+  `reports/traceability-matrix.html` (open in a browser).
+- **Health badge.** `nomograph-sysml stat --badge > reports/health-badge.svg`.
+- **Live / ad-hoc.** Pipe any `.mmd` to a Mermaid renderer (mermaid.live, the editor's Mermaid preview,
+  or a Mermaid MCP tool) for an instant picture without committing anything.
+
+Regenerate diagrams whenever the model changes (same trigger as `reports/`); they are generated artifacts,
+never hand-edited.
+
 ## What "done" looks like for a change
 
 1. `nomograph-sysml validate <files>` → `valid: true` for every file (hard gate).

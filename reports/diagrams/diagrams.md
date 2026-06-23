@@ -1,0 +1,61 @@
+# nanos3reader — model diagrams
+
+_Generated from the SysML knowledge graph by `.nomograph/scripts/diagrams.sh`. Do not hand-edit._
+
+## Requirements traceability
+Blue = component, green requirement = verified by a test, amber requirement = satisfied but not yet verified.
+
+```mermaid
+flowchart LR
+  classDef verified fill:#d5f5e3,stroke:#27ae60,color:#145a32;
+  classDef partial  fill:#fdebd0,stroke:#e67e22,color:#7e5109;
+  classDef part     fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  classDef vcase    fill:#f4ecf7,stroke:#8e44ad,color:#4a235a;
+  P_factory_stream(["factory.stream"]):::part -->|satisfies| R_SeekableStream["SeekableStream"]
+  class R_SeekableStream verified;
+  P_factory_buf(["factory.buf"]):::part -->|satisfies| R_RangeGet["RangeGet"]
+  class R_RangeGet verified;
+  P_factory_buf(["factory.buf"]):::part -->|satisfies| R_ReadAhead["ReadAhead"]
+  class R_ReadAhead verified;
+  P_factory_buf(["factory.buf"]):::part -->|satisfies| R_KeepAlivePerObject["KeepAlivePerObject"]
+  class R_KeepAlivePerObject partial;
+  P_factory_crypto(["factory.crypto"]):::part -->|satisfies| R_SigV4Signing["SigV4Signing"]
+  class R_SigV4Signing verified;
+  P_factory_creds(["factory.creds"]):::part -->|satisfies| R_CredentialChain["CredentialChain"]
+  class R_CredentialChain partial;
+  P_factory_creds(["factory.creds"]):::part -->|satisfies| R_RefreshTemporaryCredentials["RefreshTemporaryCredentials"]
+  class R_RefreshTemporaryCredentials partial;
+  P_factory_creds(["factory.creds"]):::part -->|satisfies| R_SelfExplainingCredentialFailure["SelfExplainingCredentialFailure"]
+  class R_SelfExplainingCredentialFailure partial;
+  P_factory_config(["factory.config"]):::part -->|satisfies| R_S3CompatibleStores["S3CompatibleStores"]
+  class R_S3CompatibleStores verified;
+  P_factory_buf(["factory.buf"]):::part -->|satisfies| R_WrongRegionRedirect["WrongRegionRedirect"]
+  class R_WrongRegionRedirect partial;
+  P_factory_buf(["factory.buf"]):::part -->|satisfies| R_RetryWithBackoff["RetryWithBackoff"]
+  class R_RetryWithBackoff partial;
+  P_factory_crypto(["factory.crypto"]):::part -->|satisfies| R_MinimalDependencies["MinimalDependencies"]
+  class R_MinimalDependencies partial;
+  P_factory_crypto(["factory.crypto"]):::part -->|satisfies| R_SelectableCryptoBackend["SelectableCryptoBackend"]
+  class R_SelectableCryptoBackend verified;
+  P_factory_tls(["factory.tls"]):::part -->|satisfies| R_SmallStaticBuild["SmallStaticBuild"]
+  class R_SmallStaticBuild partial;
+  P_factory(["factory"]):::part -->|satisfies| R_ReadOnlyByDesign["ReadOnlyByDesign"]
+  class R_ReadOnlyByDesign partial;
+  V_sigv4KnownAnswer[/"sigv4KnownAnswer"/]:::vcase -.->|verifies| R_SigV4Signing
+  V_minioIntegration[/"minioIntegration"/]:::vcase -.->|verifies| R_SeekableStream
+  V_minioIntegration[/"minioIntegration"/]:::vcase -.->|verifies| R_RangeGet
+  V_minioIntegration[/"minioIntegration"/]:::vcase -.->|verifies| R_ReadAhead
+  V_minioIntegration[/"minioIntegration"/]:::vcase -.->|verifies| R_S3CompatibleStores
+  V_cryptoBackendParity[/"cryptoBackendParity"/]:::vcase -.->|verifies| R_SelectableCryptoBackend
+```
+
+## Structure — variant backends
+
+```mermaid
+flowchart TD
+  classDef def fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  Sha256Backend(["Sha256Backend"]):::def --> OpenSslSha256(["OpenSslSha256"]):::def
+  Sha256Backend(["Sha256Backend"]):::def --> BundledSha256(["BundledSha256"]):::def
+  TlsBackend(["TlsBackend"]):::def --> OpenSslTls(["OpenSslTls"]):::def
+  TlsBackend(["TlsBackend"]):::def --> MbedTlsTls(["MbedTlsTls"]):::def
+```

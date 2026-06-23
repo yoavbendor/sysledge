@@ -1,0 +1,6 @@
+flowchart TD
+  classDef def fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  Sha256Backend(["Sha256Backend"]):::def --> OpenSslSha256(["OpenSslSha256"]):::def
+  Sha256Backend(["Sha256Backend"]):::def --> BundledSha256(["BundledSha256"]):::def
+  TlsBackend(["TlsBackend"]):::def --> OpenSslTls(["OpenSslTls"]):::def
+  TlsBackend(["TlsBackend"]):::def --> MbedTlsTls(["MbedTlsTls"]):::def
