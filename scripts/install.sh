@@ -41,6 +41,16 @@ say()  { printf '\n\033[1m== %s\033[0m\n' "$*"; }
 ok()   { printf '   \033[32m✓\033[0m %s\n' "$*"; }
 warn() { printf '   \033[33m!\033[0m %s\n' "$*"; }
 have() { command -v "$1" >/dev/null 2>&1; }
+add_path() { case ":$PATH:" in *":$1:"*) ;; *) [ -d "$1" ] && PATH="$1:$PATH" ;; esac; }
+
+# Make user-space install locations writable/discoverable without root:
+#  - uv copies instead of hardlinking (cache and target are often on different FS here).
+#  - user bin dirs go on PATH so the verify step finds freshly-installed tools.
+export UV_LINK_MODE="${UV_LINK_MODE:-copy}"
+export PATH
+add_path "$HOME/.local/bin"
+add_path "${CARGO_HOME:-$HOME/.cargo}/bin"
+have cargo && add_path "$(dirname "$(command -v cargo)")"
 
 # ---- 0. prerequisites ----------------------------------------------------------------
 say "Checking prerequisites"
@@ -112,9 +122,12 @@ if [ "$DO_SVG" -eq 1 ]; then
   if have mmdc; then
     ok "already installed"
   elif have npm; then
-    npm install -g @mermaid-js/mermaid-cli \
-      && ok "installed mmdc" \
-      || warn "npm install failed (try with sudo, or pass --no-svg). Mermaid sources still work."
+    # Install into the user's prefix (~/.local) so no root / module-dir write is needed.
+    if npm install -g --prefix "$HOME/.local" @mermaid-js/mermaid-cli; then
+      add_path "$HOME/.local/bin"; ok "installed mmdc -> ~/.local/bin"
+    else
+      warn "npm install failed; pass --no-svg. Mermaid sources still work (diagrams.md)."
+    fi
   else
     warn "npm not found — SVG export skipped. Install Node 18+ for SVG, or pass --no-svg."
     warn "Without mmdc you still get .mmd + GitHub-rendered diagrams.md (zero tooling)."
@@ -149,3 +162,8 @@ say "Done"
 echo "  Diagrams:   open reports/diagrams/diagrams.md"
 echo "  Regenerate: bash .nomograph/scripts/diagrams.sh"
 echo "  LLM setup:  see INSTALL.md (Anthropic / OpenAI / local, bring-your-own-key)"
+if ! have sysmldiag || ! have nomograph-sysml; then
+  echo
+  echo "  Add the user-space bin dirs to your shell startup (then restart the shell):"
+  echo "    export PATH=\"\$HOME/.local/bin:\${CARGO_HOME:-\$HOME/.cargo}/bin:\$PATH\""
+fi

@@ -116,3 +116,13 @@ No model facts changed; the SysML `validate` gate is untouched.
   so it's independent of where the console scripts landed / PATH propagation.
 - `INSTALL.md`: lead with the user-space uv flow (`uv tool install`); added a troubleshooting
   entry for the EACCES/`command not found` cases.
+
+## 2026-06-23 — Fix: no-sudo install (npm/cargo PATH, link mode)
+
+**Verb:** Fix (tooling). Follow-up to the user-space install fix, for a host with no sudo and
+modules (cargo + nodejs) on read-only paths.
+
+- `scripts/install.sh`: `UV_LINK_MODE=copy` (cache/target on different filesystems);
+  prepend `~/.local/bin` and the cargo bin dir to PATH so verify finds freshly-installed
+  tools; install mermaid-cli with `npm install -g --prefix ~/.local` (no root); print a
+  PATH hint when user-space bins aren't yet on PATH.
