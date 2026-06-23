@@ -56,27 +56,34 @@ nomograph-sysml --version
 
 ### 2b. sysmldiag (required)
 
-Install it as a package to get the `sysmldiag` / `sysmldiag-llm` console scripts on
-PATH. **uv is the recommended installer:**
+Install it as a package to get the `sysmldiag` / `sysmldiag-llm` console scripts.
+**uv is the recommended installer.** On a shared dev host without root, use one of
+the user-space options (do **not** use `--system`, which writes to `/usr` and needs
+root):
 
 ```bash
-# uv — project-native: creates/uses a managed venv automatically
-uv run sysmldiag --help                 # auto-installs the project, then runs
-uv run python -m unittest sysmldiag.tests.test_sysmldiag sysmldiag.tests.test_llm
+# uv — install the CLIs into ~/.local/bin (no root, no venv to activate). Recommended.
+uv tool install --editable .
+uv tool update-shell          # one-time: ensure ~/.local/bin is on PATH
+sysmldiag --help
 
-# uv — into an explicit venv
+# uv — or into an explicit project venv
 uv venv && source .venv/bin/activate
 uv pip install -e .
 
-# uv — into the system interpreter (no venv)
+# uv — or just run from the project venv without installing globally
+uv run sysmldiag --help       # auto-creates .venv and installs the project
+
+# uv — system interpreter (CI / containers where you own /usr or are root)
 uv pip install --system -e .
 ```
 
 Plain pip works too (fallback):
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate   # venv recommended
-python3 -m pip install -e .
+python3 -m pip install --user -e .                   # user site (~/.local), no root
+# or, inside a venv:
+python3 -m venv .venv && source .venv/bin/activate && python3 -m pip install -e .
 ```
 
 Or run with no install at all, straight from the source tree:
@@ -101,7 +108,44 @@ Without `mmdc` everything still works — you get the `.mmd` files and a
 
 ---
 
-## 3. LLM / agent setup (bring your own key)
+## 3. Document ingestion (multi-doc, PDF, Word)
+
+The Layer B ingestion eval converts architecture docs to SysML. It accepts any mix
+of formats and multiple files in one run.
+
+| Format | Extension | Extra install needed |
+|---|---|---|
+| Markdown, plain text, reStructuredText, AsciiDoc | `.md` `.txt` `.rst` `.adoc` | none (stdlib) |
+| PDF | `.pdf` | `sysmldiag[pdf]` → installs `pypdf` |
+| Word | `.docx` | `sysmldiag[docx]` → installs `python-docx` |
+
+Install the extras you need alongside the base package:
+
+```bash
+# uv (recommended)
+uv tool install --editable '.[pdf,docx]'    # or: '.[ingest]' for both at once
+
+# pip
+pip install -e '.[pdf,docx]'
+```
+
+Run with multiple docs (they are concatenated with per-file provenance headers
+before being sent to the LLM):
+
+```bash
+PYTHONPATH=tools python3 -m sysmldiag.ingest_eval.eval \
+    --doc overview.md \
+    --doc architecture.pdf \
+    --doc details.docx \
+    --system MySystem
+```
+
+Each `--doc` file's filename appears in the LLM prompt as a `### Source:` header
+so the model can attribute facts to distinct sources in `@Provenance`.
+
+---
+
+## 4. LLM / agent setup (bring your own key)
 
 Only the **optional** Layer B ingestion eval (`sysmldiag.ingest_eval`) uses an
 LLM. It speaks to **Anthropic** or **OpenAI** (or any OpenAI-compatible endpoint,
@@ -164,7 +208,7 @@ PYTHONPATH=tools python3 -m sysmldiag.ingest_eval.eval \
 
 ---
 
-## 4. Verify the install
+## 5. Verify the install
 
 ```bash
 # deterministic renderer tests (no LLM, no network)
@@ -179,7 +223,7 @@ bash .nomograph/scripts/diagrams.sh
 
 ---
 
-## 5. Everyday usage
+## 6. Everyday usage
 
 ```bash
 sysmldiag --views all --format both        # all diagrams + SVG (if mmdc present)
@@ -192,11 +236,18 @@ internals and testing.
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
-- **`sysmldiag: command not found`** — pip installed to a user dir not on PATH, or
-  you skipped pip. Use `PYTHONPATH=tools python3 -m sysmldiag …`, or add the pip
-  scripts dir to PATH (`python3 -m site --user-base`/bin).
+- **`Permission denied … /usr/local/lib/python3.x/dist-packages`** (or `/usr/...`)
+  — an install tried to write to the system interpreter without root. On a shared
+  host use a user-space install: `uv tool install --editable .` (uv) or
+  `python3 -m pip install --user -e .` (pip). `scripts/install.sh` now does this
+  automatically when no venv is active and you're not root. Avoid `uv pip install
+  --system` unless you own `/usr`.
+- **`sysmldiag: command not found`** after a user-space install — `~/.local/bin`
+  isn't on PATH. Run `uv tool update-shell` (uv) and restart the shell, or add it:
+  `export PATH="$HOME/.local/bin:$PATH"`. You can always fall back to
+  `PYTHONPATH=tools python3 -m sysmldiag …`.
 - **`cargo: command not found`** — install Rust from <https://rustup.rs>, restart
   the shell, re-run.
 - **`mmdc` fails to launch Chromium** — container/sandbox issue; the bundled

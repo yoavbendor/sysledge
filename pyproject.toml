@@ -13,6 +13,14 @@ requires-python = ">=3.10"
 # bring-your-own-key Anthropic/OpenAI access needs no extra installs.
 dependencies = []
 
+[project.optional-dependencies]
+# pip install 'sysmldiag[pdf]'    — PDF ingestion via pypdf
+pdf  = ["pypdf>=4"]
+# pip install 'sysmldiag[docx]'   — Word (.docx) ingestion via python-docx
+docx = ["python-docx>=1"]
+# pip install 'sysmldiag[ingest]' — both at once
+ingest = ["sysmldiag[pdf,docx]"]
+
 [project.scripts]
 sysmldiag = "sysmldiag.__main__:main"
 sysmldiag-llm = "sysmldiag.llm:_main"

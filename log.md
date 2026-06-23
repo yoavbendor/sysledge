@@ -104,3 +104,44 @@ No model facts changed; the SysML `validate` gate is untouched.
 - CI `renderer-tests` now uses `astral-sh/setup-uv` + `uv run`, exercising the uv install path.
 - `INSTALL.md` documents `uv run` / `uv venv` / `uv pip --system`, with pip as fallback.
 - `uv.lock` committed (zero third-party deps; marks the repo as a uv project for reproducible runs).
+
+## 2026-06-23 — Fix: install without root on a shared host
+
+**Verb:** Fix (tooling). `uv pip install --system` failed with EACCES on a shared dev host
+(non-root, no venv) trying to write `/usr/local/lib/python3.10/dist-packages`.
+
+- `scripts/install.sh`: when no venv is active, uv now uses `uv tool install --editable .`
+  (installs the CLIs into `~/.local/bin`, no root); pip fallback uses `--user`. `--system`
+  is used only inside an active venv or as root. Verify step now runs via `PYTHONPATH`,
+  so it's independent of where the console scripts landed / PATH propagation.
+- `INSTALL.md`: lead with the user-space uv flow (`uv tool install`); added a troubleshooting
+  entry for the EACCES/`command not found` cases.
+
+## 2026-06-23 — Fix: no-sudo install (npm/cargo PATH, link mode)
+
+**Verb:** Fix (tooling). Follow-up to the user-space install fix, for a host with no sudo and
+modules (cargo + nodejs) on read-only paths.
+
+- `scripts/install.sh`: `UV_LINK_MODE=copy` (cache/target on different filesystems);
+  prepend `~/.local/bin` and the cargo bin dir to PATH so verify finds freshly-installed
+  tools; install mermaid-cli with `npm install -g --prefix ~/.local` (no root); print a
+  PATH hint when user-space bins aren't yet on PATH.
+
+## 2026-06-23 — Feature: multi-doc ingestion + PDF/Word format support
+
+**Verb:** Develop (tooling). The ingestion eval now accepts multiple documents and
+non-Markdown formats via optional extras.
+
+- `tools/sysmldiag/ingest_eval/doc_reader.py` — new module: reads `.md/.txt/.rst/.adoc`
+  (stdlib, always), `.pdf` (via `pypdf`, optional), `.docx` (via `python-docx`, optional).
+  Multi-doc: joins with `### Source: <filename>` per-file headers so the LLM and
+  `@Provenance` can attribute facts to distinct sources.
+- `eval.py`: `--doc` now accepts multiple files (`action="append"`); `run()` takes
+  `list[Path]`; reports doc count and combined line count.
+- `pyproject.toml`: added `[pdf]`, `[docx]`, `[ingest]` optional extras; core remains
+  stdlib-only (zero deps).
+- `tests/test_doc_reader.py`: offline tests (mock pypdf/python-docx); covers text formats,
+  multi-doc join, missing-dep errors with actionable install hints, empty PDF, mock extraction.
+  Total test count: 30 (was 17).
+
+No model facts changed; the SysML `validate` gate is untouched.

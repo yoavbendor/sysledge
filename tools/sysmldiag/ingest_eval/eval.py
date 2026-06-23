@@ -1,13 +1,20 @@
-"""Layer B harness: doc -> [LLM] -> SysML -> validate -> index -> diagrams.
+"""Layer B harness: doc(s) -> [LLM] -> SysML -> validate -> index -> diagrams.
 
 Asserts *structural richness* (not exact text, which an LLM cannot guarantee):
 the extracted model must validate, yield a minimum number of parts/requirements,
 and every diagram view must render and pass the structural lint. This proves the
 pipeline and the generator scale to real architecture documents.
 
-Run (needs an API key or local endpoint — see extractor.py):
+Supported formats: .md / .txt / .rst / .adoc (stdlib); .pdf (needs sysmldiag[pdf]);
+.docx (needs sysmldiag[docx]).
+
+Run (needs an API key or local endpoint — see llm.py):
     PYTHONPATH=tools python3 -m sysmldiag.ingest_eval.eval \
         --doc tools/sysmldiag/ingest_eval/medhead/source.md --system MedHead
+
+    # multiple docs (all fed to the LLM as a single concatenated prompt):
+    PYTHONPATH=tools python3 -m sysmldiag.ingest_eval.eval \
+        --doc overview.md --doc arch.pdf --doc details.docx --system MySystem
 
 Exit codes: 0 pass, 3 skipped (no LLM configured), 1 failure.
 """
@@ -24,6 +31,7 @@ from .. import views as views_pkg
 from ..graph import Graph
 from ..lint import lint_mermaid
 from ..llm import LLMConfig, LLMError
+from .doc_reader import DocReadError, read_docs
 from .extractor import extract_sysml
 
 MIN_PARTS = 4
@@ -36,8 +44,16 @@ def _nomograph(*args: str) -> subprocess.CompletedProcess:
     )
 
 
-def run(doc_path: Path, system: str, lib: Path = Path("lib")) -> int:
-    doc = doc_path.read_text()
+def run(doc_paths: list[Path], system: str, lib: Path = Path("lib")) -> int:
+    try:
+        doc = read_docs(doc_paths)
+    except DocReadError as e:
+        print(f"ERROR: {e}")
+        return 1
+
+    src_label = ", ".join(p.name for p in doc_paths)
+    print(f"read {len(doc_paths)} document(s) [{src_label}]: {len(doc.splitlines())} lines of text")
+
     try:
         cfg = LLMConfig.from_env()
         print(f"LLM: {cfg.redacted()}")
@@ -58,13 +74,11 @@ def run(doc_path: Path, system: str, lib: Path = Path("lib")) -> int:
         if "valid:true" not in val.stdout.replace('"valid": true', "valid:true").replace(
             " ", ""
         ).replace('"valid":true', "valid:true"):
-            # Be liberal in parsing nomograph's JSON; treat non-zero exit as fail.
             if val.returncode != 0:
                 print("FAIL: extracted SysML did not validate.")
                 print(val.stdout[-800:])
                 return 1
 
-        # Index with lib/ so shared imports (Concepts, ScalarValues) resolve.
         index = tmp / "index.json"
         index_inputs = [str(model_file)]
         if lib.exists():
@@ -103,11 +117,19 @@ def run(doc_path: Path, system: str, lib: Path = Path("lib")) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--doc", required=True, type=Path)
+    ap.add_argument(
+        "--doc",
+        required=True,
+        type=Path,
+        action="append",
+        dest="docs",
+        metavar="FILE",
+        help="document to ingest (.md/.txt/.pdf/.docx); repeat for multiple files",
+    )
     ap.add_argument("--system", default="MedHead")
     ap.add_argument("--lib", default=Path("lib"), type=Path)
     args = ap.parse_args(argv)
-    return run(args.doc, args.system, args.lib)
+    return run(args.docs, args.system, args.lib)
 
 
 if __name__ == "__main__":
