@@ -1,0 +1,40 @@
+flowchart TD
+  classDef act fill:#e8f8f5,stroke:#16a085,color:#0e6251;
+  classDef param fill:#fdfefe,stroke:#aab7b8,color:#566573;
+  A_Nanos3readerBehavior__BuildAuthorization["BuildAuthorization"]:::act
+  PM_Nanos3readerBehavior__BuildAuthorization__authorizationHeader(["authorizationHeader"]):::param
+  A_Nanos3readerBehavior__BuildAuthorization -.->|param| PM_Nanos3readerBehavior__BuildAuthorization__authorizationHeader
+  PM_Nanos3readerBehavior__BuildAuthorization__canonicalRequest(["canonicalRequest"]):::param
+  A_Nanos3readerBehavior__BuildAuthorization -.->|param| PM_Nanos3readerBehavior__BuildAuthorization__canonicalRequest
+  PM_Nanos3readerBehavior__BuildAuthorization__credentials(["credentials"]):::param
+  A_Nanos3readerBehavior__BuildAuthorization -.->|param| PM_Nanos3readerBehavior__BuildAuthorization__credentials
+  A_Nanos3readerBehavior__LoadWindow["LoadWindow"]:::act
+  PM_Nanos3readerBehavior__LoadWindow__credentials(["credentials"]):::param
+  A_Nanos3readerBehavior__LoadWindow -.->|param| PM_Nanos3readerBehavior__LoadWindow__credentials
+  PM_Nanos3readerBehavior__LoadWindow__reachedEof(["reachedEof"]):::param
+  A_Nanos3readerBehavior__LoadWindow -.->|param| PM_Nanos3readerBehavior__LoadWindow__reachedEof
+  PM_Nanos3readerBehavior__LoadWindow__start(["start"]):::param
+  A_Nanos3readerBehavior__LoadWindow -.->|param| PM_Nanos3readerBehavior__LoadWindow__start
+  PM_Nanos3readerBehavior__LoadWindow__window(["window"]):::param
+  A_Nanos3readerBehavior__LoadWindow -.->|param| PM_Nanos3readerBehavior__LoadWindow__window
+  A_Nanos3readerBehavior__OpenStream["OpenStream"]:::act
+  A_Nanos3readerBehavior__OpenStream__firstLoad["firstLoad"]:::act
+  A_Nanos3readerBehavior__OpenStream --> A_Nanos3readerBehavior__OpenStream__firstLoad
+  PM_Nanos3readerBehavior__OpenStream__readAheadBytes(["readAheadBytes"]):::param
+  A_Nanos3readerBehavior__OpenStream -.->|param| PM_Nanos3readerBehavior__OpenStream__readAheadBytes
+  A_Nanos3readerBehavior__OpenStream__resolve["resolve"]:::act
+  A_Nanos3readerBehavior__OpenStream --> A_Nanos3readerBehavior__OpenStream__resolve
+  PM_Nanos3readerBehavior__OpenStream__stream(["stream"]):::param
+  A_Nanos3readerBehavior__OpenStream -.->|param| PM_Nanos3readerBehavior__OpenStream__stream
+  PM_Nanos3readerBehavior__OpenStream__uri(["uri"]):::param
+  A_Nanos3readerBehavior__OpenStream -.->|param| PM_Nanos3readerBehavior__OpenStream__uri
+  A_Nanos3readerBehavior__ResolveCredentials["ResolveCredentials"]:::act
+  PM_Nanos3readerBehavior__ResolveCredentials__credentials(["credentials"]):::param
+  A_Nanos3readerBehavior__ResolveCredentials -.->|param| PM_Nanos3readerBehavior__ResolveCredentials__credentials
+  PM_Nanos3readerBehavior__ResolveCredentials__diagnostic(["diagnostic"]):::param
+  A_Nanos3readerBehavior__ResolveCredentials -.->|param| PM_Nanos3readerBehavior__ResolveCredentials__diagnostic
+  A_Nanos3readerBehavior__Seek["Seek"]:::act
+  PM_Nanos3readerBehavior__Seek__position(["position"]):::param
+  A_Nanos3readerBehavior__Seek -.->|param| PM_Nanos3readerBehavior__Seek__position
+  PM_Nanos3readerBehavior__Seek__target(["target"]):::param
+  A_Nanos3readerBehavior__Seek -.->|param| PM_Nanos3readerBehavior__Seek__target

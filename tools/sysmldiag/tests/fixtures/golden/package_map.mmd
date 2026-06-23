@@ -1,0 +1,63 @@
+flowchart TD
+  classDef lreq fill:#fdedec,stroke:#cb4335,color:#7b241c;
+  classDef lfun fill:#fef5e7,stroke:#ca6f1e,color:#7e5109;
+  classDef llog fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  classDef lphy fill:#eafaf1,stroke:#229954,color:#145a32;
+  classDef lnone fill:#f4f6f7,stroke:#909497,color:#515a5a;
+  subgraph pkg_Concepts["Concepts"]
+    Concepts__ByteRangeReadPort["ByteRangeReadPort"]:::llog
+    Concepts__ByteRangeReadStream["ByteRangeReadStream"]:::llog
+    Concepts__CredentialSourcePort["CredentialSourcePort"]:::llog
+    Concepts__Provenance["Provenance"]:::lnone
+  end
+  subgraph pkg_Nanos3readerAllocation["Nanos3readerAllocation"]
+    Nanos3readerAllocation__Nanos3reader["Nanos3reader"]:::llog
+  end
+  subgraph pkg_Nanos3readerBehavior["Nanos3readerBehavior"]
+    Nanos3readerBehavior__BuildAuthorization["BuildAuthorization"]:::lnone
+    Nanos3readerBehavior__LoadWindow["LoadWindow"]:::lnone
+    Nanos3readerBehavior__OpenStream["OpenStream"]:::lnone
+    Nanos3readerBehavior__ResolveCredentials["ResolveCredentials"]:::lnone
+    Nanos3readerBehavior__Seek["Seek"]:::lnone
+  end
+  subgraph pkg_Nanos3readerRequirements["Nanos3readerRequirements"]
+    Nanos3readerRequirements__CredentialChain["CredentialChain"]:::lreq
+    Nanos3readerRequirements__KeepAlivePerObject["KeepAlivePerObject"]:::lreq
+    Nanos3readerRequirements__MinimalDependencies["MinimalDependencies"]:::lreq
+    Nanos3readerRequirements__RangeGet["RangeGet"]:::lreq
+    Nanos3readerRequirements__ReadAhead["ReadAhead"]:::lreq
+    Nanos3readerRequirements__ReadOnlyByDesign["ReadOnlyByDesign"]:::lreq
+    Nanos3readerRequirements__RefreshTemporaryCredentials["RefreshTemporaryCredentials"]:::lreq
+    Nanos3readerRequirements__RetryWithBackoff["RetryWithBackoff"]:::lreq
+    Nanos3readerRequirements__S3CompatibleStores["S3CompatibleStores"]:::lreq
+    Nanos3readerRequirements__SeekableStream["SeekableStream"]:::lreq
+    Nanos3readerRequirements__SelectableCryptoBackend["SelectableCryptoBackend"]:::lreq
+    Nanos3readerRequirements__SelfExplainingCredentialFailure["SelfExplainingCredentialFailure"]:::lreq
+    Nanos3readerRequirements__SigV4Signing["SigV4Signing"]:::lreq
+    Nanos3readerRequirements__SmallStaticBuild["SmallStaticBuild"]:::lreq
+    Nanos3readerRequirements__WrongRegionRedirect["WrongRegionRedirect"]:::lreq
+  end
+  subgraph pkg_Nanos3readerStructure["Nanos3readerStructure"]
+    Nanos3readerStructure__BundledSha256["BundledSha256"]:::llog
+    Nanos3readerStructure__Config["Config"]:::llog
+    Nanos3readerStructure__CredentialProvider["CredentialProvider"]:::llog
+    Nanos3readerStructure__MbedTlsTls["MbedTlsTls"]:::llog
+    Nanos3readerStructure__OpenSslSha256["OpenSslSha256"]:::llog
+    Nanos3readerStructure__OpenSslTls["OpenSslTls"]:::llog
+    Nanos3readerStructure__S3IStream["S3IStream"]:::llog
+    Nanos3readerStructure__S3MinStreamFactory["S3MinStreamFactory"]:::llog
+    Nanos3readerStructure__S3Streambuf["S3Streambuf"]:::llog
+    Nanos3readerStructure__Sha256Backend["Sha256Backend"]:::llog
+    Nanos3readerStructure__TlsBackend["TlsBackend"]:::llog
+  end
+  subgraph pkg_Nanos3readerVerification["Nanos3readerVerification"]
+    Nanos3readerVerification__CryptoBackendParity["CryptoBackendParity"]:::lreq
+    Nanos3readerVerification__MinioIntegration["MinioIntegration"]:::lreq
+    Nanos3readerVerification__SigV4KnownAnswer["SigV4KnownAnswer"]:::lreq
+  end
+  subgraph pkg_ScalarValues["ScalarValues"]
+    ScalarValues__Boolean["Boolean"]:::llog
+    ScalarValues__Integer["Integer"]:::llog
+    ScalarValues__Real["Real"]:::llog
+    ScalarValues__String["String"]:::llog
+  end

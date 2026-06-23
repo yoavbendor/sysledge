@@ -1,0 +1,10 @@
+flowchart LR
+  classDef port fill:#fef9e7,stroke:#b7950b,color:#7d6608;
+  classDef part fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  PT_stream_reads(["stream.reads"]):::port
+  PT_buf_http(["buf.http"]):::port
+  PT_stream_reads <--> PT_buf_http
+  PT_Nanos3readerStructure__CredentialProvider__credSource(["credSource"]):::port
+  PT_Nanos3readerStructure__S3IStream__reads(["reads"]):::port
+  PT_Nanos3readerStructure__S3MinStreamFactory__caller(["caller"]):::port
+  PT_Nanos3readerStructure__S3Streambuf__http(["http"]):::port

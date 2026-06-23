@@ -1,0 +1,61 @@
+{
+  "generator": "tools/sysmldiag",
+  "views": [
+    {
+      "name": "requirements",
+      "title": "Requirements traceability",
+      "mmd": "requirements.mmd",
+      "svg": null,
+      "notes": [
+        "9 requirement(s) are satisfied but not verified (amber) \u2014 candidate gaps for new verification cases."
+      ],
+      "node_count": 15
+    },
+    {
+      "name": "bdd",
+      "title": "Block definition diagram",
+      "mmd": "bdd.mmd",
+      "svg": null,
+      "notes": [],
+      "node_count": 12
+    },
+    {
+      "name": "ibd",
+      "title": "Internal connections (IBD)",
+      "mmd": "ibd.mmd",
+      "svg": null,
+      "notes": [
+        "1 connection(s) across 4 declared port(s). Interconnection is under-modeled \u2014 add `connect` statements to complete the IBD."
+      ],
+      "node_count": 4
+    },
+    {
+      "name": "behavior",
+      "title": "Behavior (actions)",
+      "mmd": "behavior.mmd",
+      "svg": null,
+      "notes": [
+        "Execution order (succession/flow) is not modeled yet \u2014 edges show containment/parameters only. Add `then`/`succession` to get a true flow."
+      ],
+      "node_count": 7
+    },
+    {
+      "name": "package_map",
+      "title": "Model map (packages)",
+      "mmd": "package_map.mmd",
+      "svg": null,
+      "notes": [],
+      "node_count": 43
+    },
+    {
+      "name": "allocation",
+      "title": "Allocation (RFLP overview)",
+      "mmd": "allocation.mmd",
+      "svg": null,
+      "notes": [
+        "15 satisfy link(s) binding parts to 15 requirement(s)."
+      ],
+      "node_count": 15
+    }
+  ]
+}

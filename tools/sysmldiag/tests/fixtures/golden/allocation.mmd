@@ -1,0 +1,44 @@
+flowchart LR
+  classDef req fill:#fdedec,stroke:#cb4335,color:#7b241c;
+  classDef impl fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  subgraph impl["Implementation (Logical/Physical)"]
+  I_factory(["factory"]):::impl
+  I_factory_buf(["factory.buf"]):::impl
+  I_factory_config(["factory.config"]):::impl
+  I_factory_creds(["factory.creds"]):::impl
+  I_factory_crypto(["factory.crypto"]):::impl
+  I_factory_stream(["factory.stream"]):::impl
+  I_factory_tls(["factory.tls"]):::impl
+  end
+  subgraph reqs["Requirements"]
+  R_Nanos3readerRequirements__CredentialChain["CredentialChain"]:::req
+  R_Nanos3readerRequirements__KeepAlivePerObject["KeepAlivePerObject"]:::req
+  R_Nanos3readerRequirements__MinimalDependencies["MinimalDependencies"]:::req
+  R_Nanos3readerRequirements__RangeGet["RangeGet"]:::req
+  R_Nanos3readerRequirements__ReadAhead["ReadAhead"]:::req
+  R_Nanos3readerRequirements__ReadOnlyByDesign["ReadOnlyByDesign"]:::req
+  R_Nanos3readerRequirements__RefreshTemporaryCredentials["RefreshTemporaryCredentials"]:::req
+  R_Nanos3readerRequirements__RetryWithBackoff["RetryWithBackoff"]:::req
+  R_Nanos3readerRequirements__S3CompatibleStores["S3CompatibleStores"]:::req
+  R_Nanos3readerRequirements__SeekableStream["SeekableStream"]:::req
+  R_Nanos3readerRequirements__SelectableCryptoBackend["SelectableCryptoBackend"]:::req
+  R_Nanos3readerRequirements__SelfExplainingCredentialFailure["SelfExplainingCredentialFailure"]:::req
+  R_Nanos3readerRequirements__SigV4Signing["SigV4Signing"]:::req
+  R_Nanos3readerRequirements__SmallStaticBuild["SmallStaticBuild"]:::req
+  R_Nanos3readerRequirements__WrongRegionRedirect["WrongRegionRedirect"]:::req
+  end
+  I_factory -->|satisfies| R_Nanos3readerRequirements__ReadOnlyByDesign
+  I_factory_buf -->|satisfies| R_Nanos3readerRequirements__KeepAlivePerObject
+  I_factory_buf -->|satisfies| R_Nanos3readerRequirements__RangeGet
+  I_factory_buf -->|satisfies| R_Nanos3readerRequirements__ReadAhead
+  I_factory_buf -->|satisfies| R_Nanos3readerRequirements__RetryWithBackoff
+  I_factory_buf -->|satisfies| R_Nanos3readerRequirements__WrongRegionRedirect
+  I_factory_config -->|satisfies| R_Nanos3readerRequirements__S3CompatibleStores
+  I_factory_creds -->|satisfies| R_Nanos3readerRequirements__CredentialChain
+  I_factory_creds -->|satisfies| R_Nanos3readerRequirements__RefreshTemporaryCredentials
+  I_factory_creds -->|satisfies| R_Nanos3readerRequirements__SelfExplainingCredentialFailure
+  I_factory_crypto -->|satisfies| R_Nanos3readerRequirements__MinimalDependencies
+  I_factory_crypto -->|satisfies| R_Nanos3readerRequirements__SelectableCryptoBackend
+  I_factory_crypto -->|satisfies| R_Nanos3readerRequirements__SigV4Signing
+  I_factory_stream -->|satisfies| R_Nanos3readerRequirements__SeekableStream
+  I_factory_tls -->|satisfies| R_Nanos3readerRequirements__SmallStaticBuild

@@ -43,6 +43,19 @@ Also available as MCP server via `nomograph-sysml --mcp`.
 All commands output JSON by default. `render` outputs markdown/html/csv.
 Pipe between commands: `nomograph-sysml search "port" | jq '.[].qualified_name'`
 
+## Diagrams (graphical view)
+
+nomograph renders tables + an SVG badge, not box-and-arrow diagrams. The `sysmldiag` component
+(`tools/sysmldiag/`) derives Mermaid diagrams from the index — deterministically, no LLM:
+
+```
+bash .nomograph/scripts/diagrams.sh                       # all views -> reports/diagrams/
+PYTHONPATH=tools python3 -m sysmldiag --views bdd,requirements   # selected aspects
+```
+
+Views: `requirements`, `bdd`, `ibd`, `behavior`, `package_map`, `allocation`. Open
+`reports/diagrams/diagrams.md` (renders inline on GitHub). Reference: `docs/diagrams.md`.
+
 ## Help
 
 Run `nomograph-sysml <command> --help` for detailed options.
