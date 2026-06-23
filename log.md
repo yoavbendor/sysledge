@@ -74,3 +74,23 @@ and is never part of the CI gate. Fixture: a paraphrased MedHead architecture br
 are replaced by the new view set; `diagrams.sh` is now a thin wrapper over `python3 -m sysmldiag`.
 Tier-A authentic-notation rendering (PlantUML SysML profile / SysML kernel) documented as a future,
 optional renderer in `docs/diagrams.md`.
+
+---
+
+## 2026-06-23 — Tooling: dev-host install + multi-provider LLM (BYO key)
+
+**Verb:** Refactor/Develop (tooling). Made the toolset installable on a dev host and generalized the
+optional agent LLM access to Anthropic **and** OpenAI with bring-your-own-key.
+
+- `pyproject.toml` — `pip install -e .` exposes console scripts `sysmldiag` and `sysmldiag-llm`
+  (stdlib-only; no third-party deps for either diagrams or the LLM client).
+- `scripts/install.sh` — idempotent installer: nomograph-sysml (cargo), the Python package, optional
+  mermaid-cli, then verifies (tests + validate + index + diagrams). Flags: `--no-rust/--no-svg/--no-pip/--check-llm`.
+- `INSTALL.md` — detailed manual + automated install, LLM/agent setup, verification, troubleshooting.
+- `tools/sysmldiag/llm.py` — provider-agnostic client (Anthropic + OpenAI + OpenAI-compatible/local,
+  e.g. Gemma). Keys come from env only; defaults are small/cheap (Haiku 4.5 / gpt-4o-mini). `--check`/`--show`.
+- `ingest_eval/extractor.py` now builds on `llm.py`; the Layer B eval reports the resolved (redacted) config.
+- Tests: added `tests/test_llm.py` (offline: config resolution, BYO key, missing-key/unknown-provider errors).
+  CI now runs the whole `tools/sysmldiag/tests` suite by discovery (17 tests, green).
+
+No model facts changed; the SysML `validate` gate is untouched.

@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Layer A — deterministic renderer tests
-        run: PYTHONPATH=tools python3 -m unittest sysmldiag.tests.test_sysmldiag
+        run: PYTHONPATH=tools python3 -m unittest discover -s tools/sysmldiag/tests -p 'test_*.py' -t tools
 
   diagrams-fresh:
     runs-on: ubuntu-latest

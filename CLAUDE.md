@@ -18,7 +18,8 @@ Read these first: `docs/domain-2-plan.md` (the plan), `docs/conventions.md` (the
 ## Tooling
 
 `nomograph-sysml` (Rust CLI + MCP server: run `nomograph-sysml --mcp`). Validate/query/render the models;
-never hand-assert what you can derive from the index. Key commands — full list in `SKILL.md`:
+never hand-assert what you can derive from the index. Key commands — full list in `SKILL.md`. Installing the
+toolset on a dev host (and the optional Anthropic/OpenAI LLM setup, bring-your-own-key): see `INSTALL.md`.
 
 ```
 nomograph-sysml validate <files>                 # syntax gate (must be valid:true)

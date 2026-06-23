@@ -23,7 +23,8 @@ from pathlib import Path
 from .. import views as views_pkg
 from ..graph import Graph
 from ..lint import lint_mermaid
-from .extractor import LLMError, extract_sysml
+from ..llm import LLMConfig, LLMError
+from .extractor import extract_sysml
 
 MIN_PARTS = 4
 MIN_REQS = 3
@@ -38,10 +39,13 @@ def _nomograph(*args: str) -> subprocess.CompletedProcess:
 def run(doc_path: Path, system: str, lib: Path = Path("lib")) -> int:
     doc = doc_path.read_text()
     try:
-        sysml = extract_sysml(doc, system)
+        cfg = LLMConfig.from_env()
+        print(f"LLM: {cfg.redacted()}")
+        sysml = extract_sysml(doc, system, cfg)
     except LLMError as e:
         print(f"SKIP: LLM not configured ({e}).")
-        print("      Set ANTHROPIC_API_KEY (Haiku) or a local SYSMLDIAG_LLM_BASE_URL.")
+        print("      Configure a provider — e.g. ANTHROPIC_API_KEY or OPENAI_API_KEY;")
+        print("      see `python3 -m sysmldiag.llm --show`.")
         return 3
 
     with tempfile.TemporaryDirectory() as td:

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sysmldiag"
+version = "0.1.0"
+description = "Deterministic SysML v2 -> Mermaid diagram generator for the sysledge knowledge base"
+readme = "tools/sysmldiag/README.md"
+requires-python = ">=3.10"
+# Core (diagram generation) has NO third-party dependencies — stdlib only.
+# The optional LLM client (sysmldiag.llm) also uses only stdlib urllib, so
+# bring-your-own-key Anthropic/OpenAI access needs no extra installs.
+dependencies = []
+
+[project.scripts]
+sysmldiag = "sysmldiag.__main__:main"
+sysmldiag-llm = "sysmldiag.llm:_main"
+
+[tool.setuptools]
+package-dir = { "" = "tools" }
+
+[tool.setuptools.packages.find]
+where = ["tools"]
+include = ["sysmldiag*"]
