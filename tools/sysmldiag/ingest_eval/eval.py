@@ -35,7 +35,7 @@ def _nomograph(*args: str) -> subprocess.CompletedProcess:
     )
 
 
-def run(doc_path: Path, system: str) -> int:
+def run(doc_path: Path, system: str, lib: Path = Path("lib")) -> int:
     doc = doc_path.read_text()
     try:
         sysml = extract_sysml(doc, system)
@@ -60,8 +60,12 @@ def run(doc_path: Path, system: str) -> int:
                 print(val.stdout[-800:])
                 return 1
 
+        # Index with lib/ so shared imports (Concepts, ScalarValues) resolve.
         index = tmp / "index.json"
-        idx = _nomograph("index", str(model_file), "--output", str(index))
+        index_inputs = [str(model_file)]
+        if lib.exists():
+            index_inputs.insert(0, str(lib))
+        idx = _nomograph("index", *index_inputs, "--output", str(index))
         if idx.returncode != 0 or not index.exists():
             print("FAIL: indexing failed.")
             print(idx.stderr[-800:])
@@ -97,8 +101,9 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--doc", required=True, type=Path)
     ap.add_argument("--system", default="MedHead")
+    ap.add_argument("--lib", default=Path("lib"), type=Path)
     args = ap.parse_args(argv)
-    return run(args.doc, args.system)
+    return run(args.doc, args.system, args.lib)
 
 
 if __name__ == "__main__":
