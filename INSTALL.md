@@ -108,7 +108,44 @@ Without `mmdc` everything still works — you get the `.mmd` files and a
 
 ---
 
-## 3. LLM / agent setup (bring your own key)
+## 3. Document ingestion (multi-doc, PDF, Word)
+
+The Layer B ingestion eval converts architecture docs to SysML. It accepts any mix
+of formats and multiple files in one run.
+
+| Format | Extension | Extra install needed |
+|---|---|---|
+| Markdown, plain text, reStructuredText, AsciiDoc | `.md` `.txt` `.rst` `.adoc` | none (stdlib) |
+| PDF | `.pdf` | `sysmldiag[pdf]` → installs `pypdf` |
+| Word | `.docx` | `sysmldiag[docx]` → installs `python-docx` |
+
+Install the extras you need alongside the base package:
+
+```bash
+# uv (recommended)
+uv tool install --editable '.[pdf,docx]'    # or: '.[ingest]' for both at once
+
+# pip
+pip install -e '.[pdf,docx]'
+```
+
+Run with multiple docs (they are concatenated with per-file provenance headers
+before being sent to the LLM):
+
+```bash
+PYTHONPATH=tools python3 -m sysmldiag.ingest_eval.eval \
+    --doc overview.md \
+    --doc architecture.pdf \
+    --doc details.docx \
+    --system MySystem
+```
+
+Each `--doc` file's filename appears in the LLM prompt as a `### Source:` header
+so the model can attribute facts to distinct sources in `@Provenance`.
+
+---
+
+## 4. LLM / agent setup (bring your own key)
 
 Only the **optional** Layer B ingestion eval (`sysmldiag.ingest_eval`) uses an
 LLM. It speaks to **Anthropic** or **OpenAI** (or any OpenAI-compatible endpoint,
@@ -171,7 +208,7 @@ PYTHONPATH=tools python3 -m sysmldiag.ingest_eval.eval \
 
 ---
 
-## 4. Verify the install
+## 5. Verify the install
 
 ```bash
 # deterministic renderer tests (no LLM, no network)
@@ -186,7 +223,7 @@ bash .nomograph/scripts/diagrams.sh
 
 ---
 
-## 5. Everyday usage
+## 6. Everyday usage
 
 ```bash
 sysmldiag --views all --format both        # all diagrams + SVG (if mmdc present)
@@ -199,7 +236,7 @@ internals and testing.
 
 ---
 
-## 6. Troubleshooting
+## 7. Troubleshooting
 
 - **`Permission denied … /usr/local/lib/python3.x/dist-packages`** (or `/usr/...`)
   — an install tried to write to the system interpreter without root. On a shared

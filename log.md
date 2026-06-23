@@ -126,3 +126,22 @@ modules (cargo + nodejs) on read-only paths.
   prepend `~/.local/bin` and the cargo bin dir to PATH so verify finds freshly-installed
   tools; install mermaid-cli with `npm install -g --prefix ~/.local` (no root); print a
   PATH hint when user-space bins aren't yet on PATH.
+
+## 2026-06-23 — Feature: multi-doc ingestion + PDF/Word format support
+
+**Verb:** Develop (tooling). The ingestion eval now accepts multiple documents and
+non-Markdown formats via optional extras.
+
+- `tools/sysmldiag/ingest_eval/doc_reader.py` — new module: reads `.md/.txt/.rst/.adoc`
+  (stdlib, always), `.pdf` (via `pypdf`, optional), `.docx` (via `python-docx`, optional).
+  Multi-doc: joins with `### Source: <filename>` per-file headers so the LLM and
+  `@Provenance` can attribute facts to distinct sources.
+- `eval.py`: `--doc` now accepts multiple files (`action="append"`); `run()` takes
+  `list[Path]`; reports doc count and combined line count.
+- `pyproject.toml`: added `[pdf]`, `[docx]`, `[ingest]` optional extras; core remains
+  stdlib-only (zero deps).
+- `tests/test_doc_reader.py`: offline tests (mock pypdf/python-docx); covers text formats,
+  multi-doc join, missing-dep errors with actionable install hints, empty PDF, mock extraction.
+  Total test count: 30 (was 17).
+
+No model facts changed; the SysML `validate` gate is untouched.
