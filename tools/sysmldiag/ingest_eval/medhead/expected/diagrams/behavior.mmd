@@ -1,0 +1,8 @@
+flowchart TD
+  classDef act fill:#e8f8f5,stroke:#16a085,color:#0e6251;
+  classDef param fill:#fdfefe,stroke:#aab7b8,color:#566573;
+  A_MedHead__AllocateBed["AllocateBed"]:::act
+  PM_MedHead__AllocateBed__request(["request"]):::param
+  A_MedHead__AllocateBed -.->|param| PM_MedHead__AllocateBed__request
+  PM_MedHead__AllocateBed__reservation(["reservation"]):::param
+  A_MedHead__AllocateBed -.->|param| PM_MedHead__AllocateBed__reservation

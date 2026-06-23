@@ -1,0 +1,32 @@
+flowchart LR
+  classDef port fill:#fef9e7,stroke:#b7950b,color:#7d6608;
+  classDef part fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  PT_appointments_events(["appointments.events"]):::port
+  PT_eventBus_feed(["eventBus.feed"]):::port
+  PT_appointments_events <--> PT_eventBus_feed
+  PT_dataLake_ingest(["dataLake.ingest"]):::port
+  PT_eventBus_feed <--> PT_dataLake_ingest
+  PT_medicalHistory_events(["medicalHistory.events"]):::port
+  PT_medicalHistory_events <--> PT_eventBus_feed
+  PT_medicalSpecialist_events(["medicalSpecialist.events"]):::port
+  PT_medicalSpecialist_events <--> PT_eventBus_feed
+  PT_patientInformation_events(["patientInformation.events"]):::port
+  PT_patientInformation_events <--> PT_eventBus_feed
+  PT_providerManagement_events(["providerManagement.events"]):::port
+  PT_providerManagement_events <--> PT_eventBus_feed
+  PT_rosters_events(["rosters.events"]):::port
+  PT_rosters_events <--> PT_eventBus_feed
+  PT_scheduling_events(["scheduling.events"]):::port
+  PT_scheduling_events <--> PT_eventBus_feed
+  PT_specialism_events(["specialism.events"]):::port
+  PT_specialism_events <--> PT_eventBus_feed
+  PT_MedHead__Appointments__events(["events"]):::port
+  PT_MedHead__DataLake__ingest(["ingest"]):::port
+  PT_MedHead__EventBus__feed(["feed"]):::port
+  PT_MedHead__MedicalHistory__events(["events"]):::port
+  PT_MedHead__MedicalSpecialist__events(["events"]):::port
+  PT_MedHead__PatientInformation__events(["events"]):::port
+  PT_MedHead__ProviderManagement__events(["events"]):::port
+  PT_MedHead__Rosters__events(["events"]):::port
+  PT_MedHead__Scheduling__events(["events"]):::port
+  PT_MedHead__Specialism__events(["events"]):::port

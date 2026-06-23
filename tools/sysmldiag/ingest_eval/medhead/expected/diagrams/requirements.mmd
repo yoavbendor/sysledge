@@ -1,0 +1,26 @@
+flowchart LR
+  classDef verified fill:#d5f5e3,stroke:#27ae60,color:#145a32;
+  classDef partial  fill:#fdebd0,stroke:#e67e22,color:#7e5109;
+  classDef orphan   fill:#f2f3f4,stroke:#85929e,color:#424949;
+  classDef part     fill:#eaf2f8,stroke:#2980b9,color:#1b4f72;
+  classDef vcase    fill:#f4ecf7,stroke:#8e44ad,color:#4a235a;
+  P_eventBus(["eventBus"]):::part
+  R_FaultTolerance["FaultTolerance"]:::partial
+  P_eventBus -->|satisfies| R_FaultTolerance
+  P_integrationLayer(["integrationLayer"]):::part
+  R_NhsInteroperability["NhsInteroperability"]:::partial
+  P_integrationLayer -->|satisfies| R_NhsInteroperability
+  P_patientInformation(["patientInformation"]):::part
+  R_GdprAdherence["GdprAdherence"]:::partial
+  P_patientInformation -->|satisfies| R_GdprAdherence
+  P_scheduling(["scheduling"]):::part
+  R_SubSecondBedAvailability["SubSecondBedAvailability"]:::partial
+  P_scheduling -->|satisfies| R_SubSecondBedAvailability
+  P_serviceMesh(["serviceMesh"]):::part
+  R_ZeroDisruptionMigration["ZeroDisruptionMigration"]:::partial
+  P_serviceMesh -->|satisfies| R_ZeroDisruptionMigration
+  R_MedHead__FaultTolerance["FaultTolerance"]:::orphan
+  R_MedHead__GdprAdherence["GdprAdherence"]:::orphan
+  R_MedHead__NhsInteroperability["NhsInteroperability"]:::orphan
+  R_MedHead__SubSecondBedAvailability["SubSecondBedAvailability"]:::orphan
+  R_MedHead__ZeroDisruptionMigration["ZeroDisruptionMigration"]:::orphan
