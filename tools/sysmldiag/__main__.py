@@ -65,7 +65,7 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
 
-    write_markdown(out_dir, results, args.title)
+    write_markdown(out_dir, results, args.title, svgs)
     write_manifest(out_dir, results, svgs)
 
     print(

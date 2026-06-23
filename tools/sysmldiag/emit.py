@@ -28,7 +28,10 @@ def _node_table(view: ViewResult) -> list[str]:
     return rows
 
 
-def write_markdown(out_dir: Path, views: list[ViewResult], title: str) -> Path:
+def write_markdown(
+    out_dir: Path, views: list[ViewResult], title: str, svgs: dict | None = None
+) -> Path:
+    svgs = svgs or {}
     md: list[str] = [
         f"# {title} — model diagrams",
         "",
@@ -49,6 +52,8 @@ def write_markdown(out_dir: Path, views: list[ViewResult], title: str) -> Path:
         md.append(v.description)
         if v.legend:
             md += ["", f"*{v.legend}*"]
+        if v.name in svgs:
+            md += ["", f"[View as SVG]({svgs[v.name]})"]
         md += ["", "```mermaid", v.mermaid, "```"]
         if v.notes:
             md.append("")

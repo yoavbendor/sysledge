@@ -17,6 +17,8 @@ Which part satisfies which requirement, and which is verified.
 
 *Blue rounded = component, purple = verification case. Green requirement = verified, amber = satisfied-but-unverified, grey = orphan.*
 
+[View as SVG](svg/requirements.svg)
+
 ```mermaid
 flowchart LR
   classDef verified fill:#d5f5e3,stroke:#27ae60,color:#145a32;
@@ -103,6 +105,8 @@ Part definitions, their attributes/ports, inheritance and composition.
 
 *`<|--` = specialization (variant backend), `*--` = composition (owned part). «port»/«interface» tag connection points.*
 
+[View as SVG](svg/bdd.svg)
+
 ```mermaid
 classDiagram
   class Nanos3reader["Nanos3reader"] {
@@ -180,6 +184,8 @@ Ports and the connections wiring parts together.
 
 *Yellow = port/interface. `<-->` = a modeled connection.*
 
+[View as SVG](svg/ibd.svg)
+
 ```mermaid
 flowchart LR
   classDef port fill:#fef9e7,stroke:#b7950b,color:#7d6608;
@@ -212,6 +218,8 @@ flowchart LR
 Action decomposition and parameters.
 
 *Teal = action, grey rounded = parameter. Solid = sub-action.*
+
+[View as SVG](svg/behavior.svg)
 
 ```mermaid
 flowchart TD
@@ -278,6 +286,8 @@ flowchart TD
 Every package and the definitions it contains, by RFLP layer.
 
 *Colour = RFLP layer. Definitions per layer — Requirements: 18, Logical: 19.*
+
+[View as SVG](svg/package_map.svg)
 
 ```mermaid
 flowchart TD
@@ -401,6 +411,8 @@ flowchart TD
 Which implementation part realizes which requirement, across layers.
 
 *Red = requirement, blue = implementing part. Arrow = satisfies.*
+
+[View as SVG](svg/allocation.svg)
 
 ```mermaid
 flowchart LR

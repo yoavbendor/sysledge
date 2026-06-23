@@ -5,7 +5,7 @@
       "name": "requirements",
       "title": "Requirements traceability",
       "mmd": "requirements.mmd",
-      "svg": null,
+      "svg": "svg/requirements.svg",
       "notes": [
         "9 requirement(s) are satisfied but not verified (amber) \u2014 candidate gaps for new verification cases."
       ],
@@ -15,7 +15,7 @@
       "name": "bdd",
       "title": "Block definition diagram",
       "mmd": "bdd.mmd",
-      "svg": null,
+      "svg": "svg/bdd.svg",
       "notes": [],
       "node_count": 12
     },
@@ -23,7 +23,7 @@
       "name": "ibd",
       "title": "Internal connections (IBD)",
       "mmd": "ibd.mmd",
-      "svg": null,
+      "svg": "svg/ibd.svg",
       "notes": [
         "1 connection(s) across 4 declared port(s). Interconnection is under-modeled \u2014 add `connect` statements to complete the IBD."
       ],
@@ -33,7 +33,7 @@
       "name": "behavior",
       "title": "Behavior (actions)",
       "mmd": "behavior.mmd",
-      "svg": null,
+      "svg": "svg/behavior.svg",
       "notes": [
         "Execution order (succession/flow) is not modeled yet \u2014 edges show containment/parameters only. Add `then`/`succession` to get a true flow."
       ],
@@ -43,7 +43,7 @@
       "name": "package_map",
       "title": "Model map (packages)",
       "mmd": "package_map.mmd",
-      "svg": null,
+      "svg": "svg/package_map.svg",
       "notes": [],
       "node_count": 43
     },
@@ -51,7 +51,7 @@
       "name": "allocation",
       "title": "Allocation (RFLP overview)",
       "mmd": "allocation.mmd",
-      "svg": null,
+      "svg": "svg/allocation.svg",
       "notes": [
         "15 satisfy link(s) binding parts to 15 requirement(s)."
       ],
