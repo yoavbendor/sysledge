@@ -184,3 +184,23 @@ patches (LLM → JSON, Step 2) are validated at parse time.
 - `pyproject.toml`: `dependencies = ["pydantic>=2"]` (diagrams + llm client remain
   stdlib-only). `uv.lock` updated; CI `renderer-tests` (uv run) installs it automatically.
 - Tests updated; suite stays green (53 tests).
+
+## 2026-06-24 — Widen: ingestion agents (Step 2)
+
+**Verb:** Develop (tooling, Layer B). Add `tools/sysmldiag/ingest/agents.py`: doc-chunk →
+`Patch` agents that enqueue only (authority.py remains the single writer).
+
+- `chunk_markdown` splits docs on ATX headings, computing each chunk's authoritative
+  `@Provenance.source` (`<source-id>:<doc>#<heading-slug>`).
+- `ScannerAgent` (`scan`) → `add` part/requirement/action defs (routed to the right
+  aspect file/package by kind); `ConnectorAgent` (`connect`) → connection fragments
+  seeded with existing part names; both via injectable `llm.complete`, parsing JSON
+  straight into `Patch.parse(...)` (bad items skipped, never enqueued). Provenance is
+  agent-computed, not model-supplied.
+- `ReconcilerAgent` (`reconcile`, deterministic): dedupes against the indexed `Graph`,
+  drops duplicates, and flags name/kind contradictions to `reports/review/` + `log.md`
+  via `write_review` — never proposes an overwrite (guardrails #2/#4).
+- `PortMapperAgent` (`port_map`, deterministic): parses markdown interface tables into
+  `port` patches; no LLM.
+- Exports surfaced from `ingest/__init__.py`. Offline tests in `test_ingest_agents.py`
+  (fake completer, in-memory Graph). Suite: 70 tests green. No new dependencies.
