@@ -153,8 +153,8 @@ def _restore(repo_root: Path, rel: str, original: bytes | None) -> None:
 def _append_log(repo_root: Path, patch: Patch, target: Path) -> None:
     line = (
         f"\n- {time.strftime('%Y-%m-%d')} **{patch.op}** `{target}` "
-        f"(agent={patch.agent}, source={patch.provenance.get('source')}, "
-        f"maturity={patch.provenance.get('maturity')}): {patch.rationale or 'patch applied'} "
+        f"(agent={patch.agent}, source={patch.provenance.source}, "
+        f"maturity={patch.provenance.maturity}): {patch.rationale or 'patch applied'} "
         f"[patch {patch.id}]\n"
     )
     log = repo_root / "log.md"
@@ -171,7 +171,7 @@ def apply_one(
     """Snapshot → edit → validate → commit-or-rollback. Never raises on a bad edit;
     returns a rejected Result instead."""
     try:
-        patch.validate()
+        patch.validate_patch()
     except PatchError as e:
         return Result(patch.id, "rejected", f"schema: {e}")
 

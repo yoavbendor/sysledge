@@ -10,7 +10,7 @@ from pathlib import Path
 from sysmldiag.ingest.queue import Patch, PatchError, Queue, new_id
 
 
-def _patch(**over) -> Patch:
+def _d(**over) -> dict:
     base = dict(
         op="add",
         target_file="models/nanos3reader/structure.sysml",
@@ -21,41 +21,45 @@ def _patch(**over) -> Patch:
         rationale="found a widget",
     )
     base.update(over)
-    return Patch(**base)
+    return base
+
+
+def _patch(**over) -> Patch:
+    return Patch.parse(_d(**over))
 
 
 class PatchValidateTest(unittest.TestCase):
-    def test_valid_patch_passes(self):
-        _patch().validate()  # no raise
+    def test_valid_patch_parses(self):
+        _patch()  # no raise
 
     def test_add_without_provenance_annotation_rejected(self):
         with self.assertRaises(PatchError) as e:
-            _patch(sysml="part def Widget {}").validate()
+            _patch(sysml="part def Widget {}")
         self.assertIn("@Provenance", str(e.exception))
 
     def test_missing_source_rejected(self):
         with self.assertRaises(PatchError):
-            _patch(provenance={"maturity": "concept"}).validate()
+            _patch(provenance={"maturity": "concept"})
 
     def test_bad_maturity_rejected(self):
         with self.assertRaises(PatchError):
-            _patch(provenance={"source": "s", "maturity": "guess"}).validate()
+            _patch(provenance={"source": "s", "maturity": "guess"})
 
     def test_unknown_op_rejected(self):
         with self.assertRaises(PatchError):
-            _patch(op="frobnicate").validate()
+            _patch(op="frobnicate")
 
     def test_path_escape_rejected(self):
         with self.assertRaises(PatchError):
-            _patch(target_file="../etc/passwd").validate()
+            _patch(target_file="../etc/passwd")
 
     def test_path_outside_models_or_lib_rejected(self):
         with self.assertRaises(PatchError):
-            _patch(target_file="docs/conventions.md").validate()
+            _patch(target_file="docs/conventions.md")
 
     def test_remove_op_does_not_require_provenance_in_sysml(self):
-        # remove/promote ops carry no fragment facts; only provenance dict required.
-        _patch(op="remove", sysml="", anchor="Widget").validate()
+        # remove/promote ops carry no fragment facts; only the provenance dict is required.
+        _patch(op="remove", sysml="", anchor="Widget")
 
 
 class NewIdTest(unittest.TestCase):
@@ -75,17 +79,15 @@ class QueueTest(unittest.TestCase):
         self.q = Queue(self.root)
 
     def test_enqueue_and_iter_fifo(self):
-        p1 = _patch(rationale="first")
+        self.q.enqueue(_patch(rationale="first"))
         time.sleep(0.001)
-        p2 = _patch(rationale="second")
-        self.q.enqueue(p1)
-        self.q.enqueue(p2)
+        self.q.enqueue(_patch(rationale="second"))
         seen = [patch.rationale for _, patch in self.q.iter_incoming()]
         self.assertEqual(seen, ["first", "second"])
 
-    def test_enqueue_validates(self):
+    def test_cannot_build_invalid_patch(self):
         with self.assertRaises(PatchError):
-            self.q.enqueue(_patch(provenance={"source": "s", "maturity": "nope"}))
+            _patch(provenance={"source": "s", "maturity": "nope"})
 
     def test_roundtrip_serialization(self):
         p = _patch()

@@ -169,3 +169,18 @@ must exist before any automated edits. Stdlib-only (no pydantic/filelock/ULID).
   `sysledge-apply`.
 
 No model facts changed; the SysML `validate` gate is untouched.
+
+## 2026-06-24 — Refactor: Patch schema on pydantic (lean + pydantic)
+
+**Verb:** Refactor (tooling). Per the "lean + pydantic" decision, migrate the ingestion
+`Patch` schema from stdlib dataclasses to `pydantic.BaseModel` so machine-generated
+patches (LLM → JSON, Step 2) are validated at parse time.
+
+- `ingest/queue.py`: `Patch`/`Provenance` are pydantic models; typed `op`/`maturity`
+  via `Literal`; guardrails (`@Provenance` in add/modify fragments, path-safety) run as a
+  `model_validator`. `Patch.parse(dict)` surfaces every failure as a single `PatchError`.
+  Rest stays stdlib (atomic writes, sortable id, FIFO dirs).
+- `ingest/authority.py`: provenance access via the typed model.
+- `pyproject.toml`: `dependencies = ["pydantic>=2"]` (diagrams + llm client remain
+  stdlib-only). `uv.lock` updated; CI `renderer-tests` (uv run) installs it automatically.
+- Tests updated; suite stays green (53 tests).
