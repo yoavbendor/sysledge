@@ -204,3 +204,23 @@ patches (LLM → JSON, Step 2) are validated at parse time.
   `port` patches; no LLM.
 - Exports surfaced from `ingest/__init__.py`. Offline tests in `test_ingest_agents.py`
   (fake completer, in-memory Graph). Suite: 70 tests green. No new dependencies.
+
+## 2026-06-24 — Develop: multi-system driver (Step 3)
+
+**Verb:** Develop (tooling). Add `sysledge.toml` + `tools/sysmldiag/ingest/build_models.py`:
+the driver that turns configured docs into applied SysML via the Step 2 agents and the
+Step 1 apply-authority.
+
+- `sysledge.toml`: `[[systems]]` = {id, package, model_dir, docs[], source_id?}. Pilot
+  entry for nanos3reader (docs glob `raw/nanos3reader/*.md`, currently empty — ready for
+  when source docs are dropped into the registry).
+- `build_models.py`: `load_systems` (tomllib, py3.10 `tomli` fallback), `source_id_for`
+  (explicit override or first `id:` in `raw/<id>/manifest.yaml`), `resolve_docs`,
+  `build_system` (read docs → chunk → scan + port_map [+connect] → reconcile/write_review
+  → enqueue → `drain` validate-or-rollback → reindex → `ensure_index_imports` →
+  regenerate diagrams), and `sysledge-build` console script (`--system`, `--connect`,
+  `--no-llm`, `--dry-run`). All side effects (LLM/validator/reindex/diagrams) injected.
+- `ensure_index_imports` keeps `models/index.sysml` importing each existing aspect
+  package (`<Base>{Structure,Requirements,Behavior}`), idempotently.
+- Offline tests (`test_ingest_build.py`): full apply loop, no-LLM ports-only, dry-run
+  byte-for-byte revert, config/manifest parsing. Suite: 78 tests green. No new deps.

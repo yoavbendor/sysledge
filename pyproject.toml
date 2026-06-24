@@ -25,6 +25,7 @@ ingest = ["sysmldiag[pdf,docx]"]
 sysmldiag = "sysmldiag.__main__:main"
 sysmldiag-llm = "sysmldiag.llm:_main"
 sysledge-apply = "sysmldiag.ingest.authority:main"
+sysledge-build = "sysmldiag.ingest.build_models:main"
 
 [tool.setuptools]
 package-dir = { "" = "tools" }

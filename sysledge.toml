@@ -1,0 +1,21 @@
+# sysledge ingestion config — one [[systems]] block per modeled system.
+#
+# The driver (`sysledge-build`, tools/sysmldiag/ingest/build_models.py) reads each
+# system's docs, runs the Layer B agents, and applies the resulting patches through the
+# validate-or-rollback apply-authority. Drop registered source documents under
+# raw/<id>/ (the immutable registry) and point `docs` at them; provenance source-ids are
+# taken from raw/<id>/manifest.yaml unless `source_id` is set explicitly here.
+#
+# Fields:
+#   id         registry dir name under raw/<id>/ (also the default source-id base)
+#   package    package base; agents append Structure/Requirements/Behavior
+#   model_dir  where this system's *.sysml live
+#   docs       globs/files (relative to repo root) to ingest
+#   source_id  optional override for the @Provenance source-id prefix
+
+[[systems]]
+id = "nanos3reader"
+package = "Nanos3reader"
+model_dir = "models/nanos3reader"
+docs = ["raw/nanos3reader/*.md"]
+# source_id derived from raw/nanos3reader/manifest.yaml (nanos3reader@ff28f0b)
