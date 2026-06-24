@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 *.egg-info/
 .venv/
+
+# Ingestion runtime state (patch queue + rollback snapshots) — transient, not source.
+queue/
+.snapshots/

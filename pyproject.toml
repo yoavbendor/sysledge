@@ -8,10 +8,10 @@ version = "0.1.0"
 description = "Deterministic SysML v2 -> Mermaid diagram generator for the sysledge knowledge base"
 readme = "tools/sysmldiag/README.md"
 requires-python = ">=3.10"
-# Core (diagram generation) has NO third-party dependencies — stdlib only.
-# The optional LLM client (sysmldiag.llm) also uses only stdlib urllib, so
-# bring-your-own-key Anthropic/OpenAI access needs no extra installs.
-dependencies = []
+# Diagram generation + the LLM client are stdlib-only. The ingestion pipeline
+# (sysmldiag.ingest) uses pydantic to validate machine-generated patches at parse
+# time — the one place strong schema validation of LLM output earns its keep.
+dependencies = ["pydantic>=2"]
 
 [project.optional-dependencies]
 # pip install 'sysmldiag[pdf]'    — PDF ingestion via pypdf
@@ -24,6 +24,7 @@ ingest = ["sysmldiag[pdf,docx]"]
 [project.scripts]
 sysmldiag = "sysmldiag.__main__:main"
 sysmldiag-llm = "sysmldiag.llm:_main"
+sysledge-apply = "sysmldiag.ingest.authority:main"
 
 [tool.setuptools]
 package-dir = { "" = "tools" }
