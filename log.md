@@ -145,3 +145,27 @@ non-Markdown formats via optional extras.
   Total test count: 30 (was 17).
 
 No model facts changed; the SysML `validate` gate is untouched.
+
+## 2026-06-24 — Develop: ingestion safety net (patch queue + apply-authority)
+
+**Verb:** Develop (tooling). Step 1 of the crystallized ingestion plan — the safety net that
+must exist before any automated edits. Stdlib-only (no pydantic/filelock/ULID).
+
+- `tools/sysmldiag/ingest/queue.py` — `Patch` dataclass + `Queue`. `Patch.validate()` enforces
+  hard guardrails in code: add/modify fragments must carry `@Provenance`; `provenance.source`
+  required; `maturity ∈ {concept,designed,implemented,verified}`; `target_file` must be a
+  repo-relative path under `models/`/`lib/` (no escapes). Time-sortable stdlib id; atomic
+  `os.replace` writes; FIFO `incoming/applied/rejected` dirs.
+- `tools/sysmldiag/ingest/authority.py` — the single writer. `apply_one` snapshots → edits
+  (best-effort text transform) → validates → commits (move to applied/, append `log.md`) or
+  rolls back byte-for-byte (restore snapshot, move to rejected/ with validator output). The
+  validator is injectable (offline tests); the default shells to `nomograph-sysml validate`
+  + `index` (catches cross-file dangling refs). `drain()` runs under an `O_EXCL` single-writer
+  lock with stale-lock detection. Console script `sysledge-apply [--once] [--dry-run]`.
+- Tests: `tests/test_ingest_queue.py` + `tests/test_ingest_authority.py` (23 new, offline with a
+  fake validator). Suite now 53 tests, green. End-to-end smoke against real nomograph (dry-run):
+  a valid patch validates+reverts, a malformed one is rejected, model file unchanged.
+- `.gitignore`: ignore transient `queue/` and `.snapshots/`. `pyproject.toml`: register
+  `sysledge-apply`.
+
+No model facts changed; the SysML `validate` gate is untouched.
